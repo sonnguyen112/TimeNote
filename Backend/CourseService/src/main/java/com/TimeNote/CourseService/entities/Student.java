@@ -18,5 +18,5 @@ public class Student {
     private Long studentID;
     private String studentName;
     private String studentCode;
-
+    private String studentImageUrl;
 }

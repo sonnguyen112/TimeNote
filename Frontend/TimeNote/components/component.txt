@@ -1,0 +1,2 @@
+Tạo các component của screen ở đây. 
+Lưu ý nên đặt tên các component có ý nghĩa và liên quan đến screen nào để dễ quản lý.

@@ -7,7 +7,7 @@ import com.TimeNote.CourseService.entities.Student;
 
 @Repository
 
-public interface StudentRespository extends JpaRepository<Student, String>{
+public interface StudentRepository extends JpaRepository<Student, String>{
 	//todo
 	Student findByStudentCode(String studentCode);
 

@@ -18,7 +18,9 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long studentID;
+    @Column(nullable = false)
     private String studentName;
+    @Column(nullable = false)
     private String studentCode;
     private String studentImageUrl;
     @Column(nullable = false, columnDefinition = "boolean default false")

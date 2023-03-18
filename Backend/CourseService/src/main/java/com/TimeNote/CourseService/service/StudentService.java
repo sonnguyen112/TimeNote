@@ -1,26 +1,38 @@
 package com.TimeNote.CourseService.service;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.aspectj.apache.bcel.util.Repository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.TimeNote.CourseService.dto.StudentRequest;
 import com.TimeNote.CourseService.dto.StudentResponse;
 import com.TimeNote.CourseService.entities.Student;
-import com.TimeNote.CourseService.respository.StudentRespository;
+import com.TimeNote.CourseService.respository.StudentRepository;
 
-import lombok.RequiredArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class StudentService {
-    private final   StudentRespository studentRespository;
+    private final   StudentRepository studentRepository;
+
+    @Autowired
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
+    public List<StudentResponse> getAllStudents() {
+        List<Student> students = studentRepository.findAll();
+        List<StudentResponse> studentResponses = students.stream().map(student -> mapToStudentResponse(student)).toList();
+        return studentResponses;
+    }
 
     public void addStudent(StudentRequest studentRequest){
         
@@ -29,12 +41,12 @@ public class StudentService {
                 .studentCode(studentRequest.getStudentCode())
                 .studentImageUrl(studentRequest.getStudentImageUrl())
                 .build();
-        studentRespository.save(student);
+        studentRepository.save(student);
         log.info("Student" + student.getStudentID() +"is saved");
     }
 
     public ResponseEntity<StudentResponse> getOneStudent(String id){  
-        Student student = studentRespository.findById(id).get();
+        Student student = studentRepository.findById(id).get();
         if (student == null)
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -44,7 +56,7 @@ public class StudentService {
    
     public boolean editOneStudent( StudentRequest studentRequest, String id)
     {   
-        Student student = studentRespository.findByStudentCode(id);
+        Student student = studentRepository.findByStudentCode(id);
         if (student == null)
         {
             return false;
@@ -52,12 +64,12 @@ public class StudentService {
         student.setStudentName(studentRequest.getStudentName());
         student.setStudentCode(studentRequest.getStudentCode());
         student.setStudentImageUrl(studentRequest.getStudentImageUrl());
-        studentRespository.save(student);
+        studentRepository.save(student);
         return true;
     }
 
     public boolean deleteOneStudent( String id) {
-        Student student = studentRespository.findByStudentCode(id);
+        Student student = studentRepository.findByStudentCode(id);
         if (student == null)
         {
             return false;

@@ -1,0 +1,1 @@
+xem mỗi feature như là 1 screen gồm nhiều component

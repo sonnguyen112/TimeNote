@@ -1,0 +1,1 @@
+các style code ở đây lưu ý nên đặt id cho các component.

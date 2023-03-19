@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class StudentRequest {
     private String studentName;
     private String studentCode;
-    private String studentImageUrl;
+   
   
 
 }

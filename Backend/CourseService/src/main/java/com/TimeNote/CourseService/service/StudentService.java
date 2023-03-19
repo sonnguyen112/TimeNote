@@ -1,19 +1,27 @@
 package com.TimeNote.CourseService.service;
 
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
+import java.io.File ;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.TimeNote.CourseService.config.DriveConfig;
 import com.TimeNote.CourseService.dto.StudentRequest;
 import com.TimeNote.CourseService.dto.StudentResponse;
 import com.TimeNote.CourseService.entities.Student;
 import com.TimeNote.CourseService.respository.StudentRepository;
+import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.Drive;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +30,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class StudentService {
     private final   StudentRepository studentRepository;
+  
+    private final DriveConfig googleDrive; 
 
     @Autowired
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, DriveConfig googleDrive) {
         this.studentRepository = studentRepository;
+        this.googleDrive = googleDrive;
     }
+    
+    
 
     public List<StudentResponse> getAllStudents() {
         List<Student> students = studentRepository.findAll();
@@ -34,15 +47,19 @@ public class StudentService {
         return studentResponses;
     }
 
-    public void addStudent(StudentRequest studentRequest){
-        
+    public StudentResponse addStudent(StudentRequest studentRequest,MultipartFile file) throws IOException{
+        File converFile = convertToFile(file);
+        com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
+        newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS")).setName(file.getOriginalFilename());
+        FileContent mediaContent = new FileContent("application/zip", converFile);
+        // com.google.api.services.drive.model.File fileW = googleDrive.files().create(newGGDriveFile, mediaContent).setFields("id,webViewLink").execute() ;
         Student student = Student.builder()
                 .studentName(studentRequest.getStudentName())
                 .studentCode(studentRequest.getStudentCode())
-                .studentImageUrl(studentRequest.getStudentImageUrl())
                 .build();
-        studentRepository.save(student);
+        // studentRepository.save(student);
         log.info("Student" + student.getStudentID() +"is saved");
+        return mapToStudentResponse(student);
     }
 
     public ResponseEntity<StudentResponse> getOneStudent(String id){  
@@ -63,7 +80,6 @@ public class StudentService {
         }
         student.setStudentName(studentRequest.getStudentName());
         student.setStudentCode(studentRequest.getStudentCode());
-        student.setStudentImageUrl(studentRequest.getStudentImageUrl());
         studentRepository.save(student);
         return true;
     }
@@ -86,4 +102,10 @@ public class StudentService {
                 .studentImageUrl(student.getStudentImageUrl())
                 .build();
     }
+
+    private File convertToFile(MultipartFile multipartFile) throws IOException {
+        File file = new File("src/main/resources/targetFile.tmp");
+        multipartFile.transferTo(file);
+        return file; 
+     }
 }

@@ -1,5 +1,6 @@
 package com.TimeNote.CourseService.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.TimeNote.CourseService.dto.StudentRequest;
 import com.TimeNote.CourseService.dto.StudentResponse;
@@ -35,13 +37,13 @@ public class StudentController {
     }
 
     @GetMapping
-    ResponseEntity<List<StudentResponse>> getAllStudents(){
+    public ResponseEntity<List<StudentResponse>> getAllStudents(){
         return ResponseEntity.status(HttpStatus.OK).body(studentService.getAllStudents());
     }
 
     @PostMapping
-    public void addStudent(@RequestBody StudentRequest studentRequest){
-        studentService.addStudent(studentRequest);
+    public ResponseEntity<StudentResponse> addStudent(@RequestBody StudentRequest studentRequest,@RequestParam("image") MultipartFile file) throws IOException{
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.addStudent(studentRequest,file));
     }
 
     // @GetMapping
@@ -51,7 +53,7 @@ public class StudentController {
     // }
 
     @PutMapping
-    public ResponseEntity<Void> editOneStudent(@RequestBody StudentRequest studentRequest, @RequestParam String id)
+    public ResponseEntity<StudentResponse> editOneStudent(@RequestBody StudentRequest studentRequest, @RequestParam String id)
     {
         if(studentService.editOneStudent(studentRequest,id)){
             return ResponseEntity.status(HttpStatus.OK).build();

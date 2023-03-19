@@ -20,16 +20,16 @@ import com.google.api.services.drive.Drive;
 @Component
 public class DriveConfig {
  
-    private GoogleCredential googleCredential ;
-    DriveConfig() throws GeneralSecurityException, IOException{
-        googleCredential = googleCredential();
-    }
+    // private GoogleCredential googleCredential ;
+    // DriveConfig() throws GeneralSecurityException, IOException{
+    //     googleCredential = googleCredential();
+    // }
     
     // @Bean
     public Drive getService() throws GeneralSecurityException, IOException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         return new Drive.Builder(HTTP_TRANSPORT,
-                JacksonFactory.getDefaultInstance(), googleCredential)
+                JacksonFactory.getDefaultInstance(), googleCredential())
                 .build();
     }
 
@@ -44,7 +44,7 @@ public class DriveConfig {
                 .setJsonFactory(jsonFactory)
                 .setServiceAccountId("timenotestorage@timenotestorage.iam.gserviceaccount.com")
                 .setServiceAccountScopes(elenco)
-                .setServiceAccountPrivateKeyFromP12File(new File("./fileConfig/timenotestorage-8253a109ee9b.p12"))
+                .setServiceAccountPrivateKeyFromP12File(new File("CourseService/src/main/java/com/TimeNote/CourseService/config/fileConfig/timenotestorage-8253a109ee9b.p12"))
                 .build();
     }
 }

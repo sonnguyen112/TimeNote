@@ -1,6 +1,7 @@
 package com.TimeNote.CourseService.controller;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<StudentResponse> addStudent(@RequestBody StudentRequest studentRequest,@RequestParam("image") MultipartFile file) throws IOException{
+    public ResponseEntity<StudentResponse> addStudent(@RequestParam("body") String studentRequest, @RequestParam("image") MultipartFile file) throws IOException, GeneralSecurityException{
         return ResponseEntity.status(HttpStatus.OK).body(studentService.addStudent(studentRequest,file));
     }
 
@@ -53,21 +54,14 @@ public class StudentController {
     // }
 
     @PutMapping
-    public ResponseEntity<StudentResponse> editOneStudent(@RequestBody StudentRequest studentRequest, @RequestParam String id)
+    public ResponseEntity<StudentResponse> editOneStudent(@RequestParam("body") String studentRequest, @RequestParam("code") String id, @RequestParam("image") MultipartFile file) throws IOException, GeneralSecurityException
     {
-        if(studentService.editOneStudent(studentRequest,id)){
-            return ResponseEntity.status(HttpStatus.OK).build();
-        };
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.editOneStudent(studentRequest,id,file));
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteOneStudent( @RequestParam String id)
+    public ResponseEntity<StudentResponse> deleteOneStudent( @RequestParam("code") String id)
     {
-        if(studentService.deleteOneStudent(id)){
-            return ResponseEntity.status(HttpStatus.OK).build();
-        };
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.deleteOneStudent(id));
     }
-    
 }

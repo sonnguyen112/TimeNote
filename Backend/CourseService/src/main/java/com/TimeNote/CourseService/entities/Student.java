@@ -20,7 +20,7 @@ public class Student {
     private Long studentID;
     @Column(nullable = false)
     private String studentName;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String studentCode;
     private String studentImageUrl;
     @Column(nullable = false, columnDefinition = "boolean default false")

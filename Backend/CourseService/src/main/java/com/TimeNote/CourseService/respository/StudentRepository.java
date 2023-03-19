@@ -18,5 +18,5 @@ public interface StudentRepository extends JpaRepository<Student, String>{
 			nativeQuery = true,
 			value = "SELECT * FROM student_table WHERE is_delete = false"
 	)
-	List<Student> findAllCustom();
+	List<Student> getAllStudents();
 }

@@ -54,6 +54,7 @@ public class StudentService {
 
     public StudentResponse addStudent(String studentRequestString, MultipartFile file)
             throws IOException, GeneralSecurityException {
+        
         File converFile = convert(file);
         com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
         newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS"))
@@ -65,10 +66,11 @@ public class StudentService {
         StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
         Student existStudent = studentRepository.findByStudentCode(studentRequest.getStudentCode());
         if (existStudent == null) {
+            String reduceLink = fileW.getWebContentLink().replace("&export=download", "");
             Student student = Student.builder()
                     .studentName(studentRequest.getStudentName())
                     .studentCode(studentRequest.getStudentCode())
-                    .studentImageUrl(fileW.getWebContentLink())
+                    .studentImageUrl(reduceLink)
                     .build();
             studentRepository.save(student);
             log.info("Student" + student.getStudentID() + "is saved");
@@ -107,10 +109,12 @@ public class StudentService {
             FileContent mediaContent = new FileContent("image/jpeg", converFile);
             com.google.api.services.drive.model.File fileW = googleDrive.getService().files()
                     .create(newGGDriveFile, mediaContent).setFields("id,webViewLink,webContentLink").execute();
+            String reduceLink = fileW.getWebContentLink().replace("&export=download", "");
             ObjectMapper objectMapper = new ObjectMapper();
             StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
             student.setStudentName(studentRequest.getStudentName());
             student.setStudentCode(studentRequest.getStudentCode());
+            student.setStudentImageUrl(reduceLink);
             studentRepository.save(student);
         } 
         else {
@@ -125,7 +129,6 @@ public class StudentService {
     }
 
     public StudentResponse deleteOneStudent(String id) {
-        System.out.println("khoi" + id + "lllll");
         Student student = studentRepository.findByStudentCode(id);
         if (student == null) {
             throw new RuntimeException("student is null");

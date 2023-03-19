@@ -22,6 +22,7 @@ public class Student {
     private String studentName;
     @Column(nullable = false)
     private String studentCode;
+    @Column(nullable = false)
     private String studentImageUrl;
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isDelete ;

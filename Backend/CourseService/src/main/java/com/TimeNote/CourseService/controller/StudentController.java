@@ -1,6 +1,7 @@
 package com.TimeNote.CourseService.controller;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,8 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<StudentResponse> addStudent(@RequestBody StudentRequest studentRequest,@RequestParam("image") MultipartFile file) throws IOException{
-        return ResponseEntity.status(HttpStatus.OK).body(studentService.addStudent(studentRequest,file));
+    public ResponseEntity<StudentResponse> addStudent(@RequestParam("image") MultipartFile file) throws IOException, GeneralSecurityException {
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.addStudent(file));
     }
 
     // @GetMapping

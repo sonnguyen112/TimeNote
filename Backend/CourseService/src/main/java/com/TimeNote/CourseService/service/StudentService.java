@@ -2,6 +2,7 @@ package com.TimeNote.CourseService.service;
 
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -42,20 +43,20 @@ public class StudentService {
     
 
     public List<StudentResponse> getAllStudents() {
-        List<Student> students = studentRepository.findAll();
+        List<Student> students = studentRepository.findAllCustom();
         List<StudentResponse> studentResponses = students.stream().map(student -> mapToStudentResponse(student)).toList();
         return studentResponses;
     }
 
-    public StudentResponse addStudent(StudentRequest studentRequest,MultipartFile file) throws IOException{
+    public StudentResponse addStudent(MultipartFile file) throws IOException, GeneralSecurityException {
         File converFile = convertToFile(file);
         com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
         newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS")).setName(file.getOriginalFilename());
         FileContent mediaContent = new FileContent("application/zip", converFile);
-        // com.google.api.services.drive.model.File fileW = googleDrive.files().create(newGGDriveFile, mediaContent).setFields("id,webViewLink").execute() ;
+         com.google.api.services.drive.model.File fileW = googleDrive.getService().files().create(newGGDriveFile, mediaContent).setFields("id,webViewLink").execute() ;
         Student student = Student.builder()
-                .studentName(studentRequest.getStudentName())
-                .studentCode(studentRequest.getStudentCode())
+                .studentName("AAAA")
+                .studentCode("AAAA")
                 .build();
         // studentRepository.save(student);
         log.info("Student" + student.getStudentID() +"is saved");
@@ -104,7 +105,7 @@ public class StudentService {
     }
 
     private File convertToFile(MultipartFile multipartFile) throws IOException {
-        File file = new File("src/main/resources/targetFile.tmp");
+        File file = new File("targetFile.txt");
         multipartFile.transferTo(file);
         return file; 
      }

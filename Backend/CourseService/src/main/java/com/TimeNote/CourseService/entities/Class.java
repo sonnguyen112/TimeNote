@@ -18,6 +18,7 @@ public class Class {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long classID;
+    @Column(unique = true, nullable = false)
     private String classCode;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(

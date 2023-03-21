@@ -2,14 +2,13 @@ package com.TimeNote.CourseService.service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import com.TimeNote.CourseService.entities.CourseDetail;
+import com.TimeNote.CourseService.respository.CourseDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
@@ -22,13 +21,8 @@ import com.TimeNote.CourseService.dto.StudentRequest;
 import com.TimeNote.CourseService.dto.StudentResponse;
 import com.TimeNote.CourseService.entities.Student;
 import com.TimeNote.CourseService.respository.StudentRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.FileContent;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.Drive.Channels.Stop;
-import com.google.api.services.drive.model.About.StorageQuota;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,17 +30,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final CourseDetailRepository courseDetailRepository;
 
     private final DriveConfig googleDrive;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository, DriveConfig googleDrive) {
+    public StudentService(StudentRepository studentRepository, CourseDetailRepository courseDetailRepository, DriveConfig googleDrive) {
         this.studentRepository = studentRepository;
+        this.courseDetailRepository = courseDetailRepository;
         this.googleDrive = googleDrive;
     }
 
-    public List<StudentResponse> getAllStudents() {
-        List<Student> students = studentRepository.getAllStudents();
+    public List<StudentResponse> getAllStudentsOfCourse(Long id) {
+        CourseDetail courseDetail = courseDetailRepository.findById(id).orElse(null);
+        if (courseDetail == null){
+            throw new RuntimeException("Something wrong");
+        }
+        List<Student> students = courseDetail.getStudents();
         List<StudentResponse> studentResponses = students.stream().map(student -> mapToStudentResponse(student))
                 .toList();
         return studentResponses;

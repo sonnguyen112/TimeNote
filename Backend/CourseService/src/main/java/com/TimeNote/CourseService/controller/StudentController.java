@@ -38,8 +38,8 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StudentResponse>> getAllStudents(){
-        return ResponseEntity.status(HttpStatus.OK).body(studentService.getAllStudents());
+    public ResponseEntity<List<StudentResponse>> getAllStudentsOfCourse(@RequestParam("course_detail_id") Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.getAllStudentsOfCourse(id));
     }
 
     @PostMapping

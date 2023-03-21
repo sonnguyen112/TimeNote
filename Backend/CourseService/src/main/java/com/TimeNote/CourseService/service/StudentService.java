@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import com.TimeNote.CourseService.entities.CourseDetail;
+import com.TimeNote.CourseService.exceptions.AppException;
 import com.TimeNote.CourseService.respository.CourseDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,7 +45,7 @@ public class StudentService {
     public List<StudentResponse> getAllStudentsOfCourse(Long id) {
         CourseDetail courseDetail = courseDetailRepository.findById(id).orElse(null);
         if (courseDetail == null){
-            throw new RuntimeException("Something wrong");
+            throw new AppException(404, "Course not found");
         }
         List<Student> students = courseDetail.getStudents();
         List<StudentResponse> studentResponses = students.stream().map(student -> mapToStudentResponse(student))
@@ -80,18 +81,10 @@ public class StudentService {
                 existStudent.setDelete(false);
                 return editOneStudent(studentRequestString, existStudent.getStudentCode(), file);
             } else {
-                throw new RuntimeException("student is still exist");
+                throw new AppException(409, "Student is still exist");
             }
         }
 
-    }
-
-    public ResponseEntity<StudentResponse> getOneStudent(String id) {
-        Student student = studentRepository.findById(id).get();
-        if (student == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(mapToStudentResponse(student));
     }
 
     public StudentResponse editOneStudent(String studentRequestString, String id, MultipartFile file)
@@ -99,7 +92,7 @@ public class StudentService {
         Student student = studentRepository.findByStudentCode(id);
         if (student == null) {
             // return mapToStudentResponse(student);
-            throw new RuntimeException("student is Null");
+            throw new AppException(404, "Student not found");
         }
         if (!file.isEmpty()) {
             File converFile = convert(file);
@@ -131,7 +124,7 @@ public class StudentService {
     public StudentResponse deleteOneStudent(String id) {
         Student student = studentRepository.findByStudentCode(id);
         if (student == null) {
-            throw new RuntimeException("student is null");
+            throw new AppException(404, "Student not found");
         }
         student.setDelete(true);
         studentRepository.save(student);

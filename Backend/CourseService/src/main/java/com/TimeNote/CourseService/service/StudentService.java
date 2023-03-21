@@ -2,11 +2,8 @@ package com.TimeNote.CourseService.service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -22,14 +19,8 @@ import com.TimeNote.CourseService.dto.StudentRequest;
 import com.TimeNote.CourseService.dto.StudentResponse;
 import com.TimeNote.CourseService.entities.Student;
 import com.TimeNote.CourseService.respository.StudentRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.FileContent;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.Drive.Channels.Stop;
-import com.google.api.services.drive.model.About.StorageQuota;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -54,7 +45,7 @@ public class StudentService {
 
     public StudentResponse addStudent(String studentRequestString, MultipartFile file)
             throws IOException, GeneralSecurityException {
-        
+
         File converFile = convert(file);
         com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
         newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS"))
@@ -62,6 +53,7 @@ public class StudentService {
         FileContent mediaContent = new FileContent("image/jpeg", converFile);
         com.google.api.services.drive.model.File fileW = googleDrive.getService().files()
                 .create(newGGDriveFile, mediaContent).setFields("id,webViewLink,webContentLink").execute();
+        DeleteFolder(converFile);
         ObjectMapper objectMapper = new ObjectMapper();
         StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
         Student existStudent = studentRepository.findByStudentCode(studentRequest.getStudentCode());
@@ -109,6 +101,7 @@ public class StudentService {
             FileContent mediaContent = new FileContent("image/jpeg", converFile);
             com.google.api.services.drive.model.File fileW = googleDrive.getService().files()
                     .create(newGGDriveFile, mediaContent).setFields("id,webViewLink,webContentLink").execute();
+            DeleteFolder(converFile);
             String reduceLink = fileW.getWebContentLink().replace("&export=download", "");
             ObjectMapper objectMapper = new ObjectMapper();
             StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
@@ -116,11 +109,10 @@ public class StudentService {
             student.setStudentCode(studentRequest.getStudentCode());
             student.setStudentImageUrl(reduceLink);
             studentRepository.save(student);
-        } 
-        else {
+        } else {
             ObjectMapper objectMapper = new ObjectMapper();
             StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
-            
+
             student.setStudentName(studentRequest.getStudentName());
             student.setStudentCode(studentRequest.getStudentCode());
             studentRepository.save(student);
@@ -153,11 +145,19 @@ public class StudentService {
             convFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(convFile);
             fos.write(file.getBytes());
-            fos.close(); // IOUtils.closeQuietly(fos);
+            fos.close();
         } catch (IOException e) {
             convFile = null;
         }
 
         return convFile;
+    }
+
+    public void DeleteFolder(File myObj) {
+        if (myObj.delete()) {
+            System.out.println("Deleted the file: " + myObj.getName());
+        } else {
+            System.out.println("Failed to delete the file.");
+        }
     }
 }

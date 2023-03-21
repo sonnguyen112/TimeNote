@@ -1,7 +1,5 @@
 package com.TimeNote.CourseService.entities;
 
-import org.hibernate.annotations.ColumnDefault;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,8 +20,9 @@ public class Student {
     private String studentName;
     @Column(nullable = false, unique = true)
     private String studentCode;
+    @Column(nullable = false)
     private String studentImageUrl;
     @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean isDelete ;
+    private boolean isDelete;
 
 }

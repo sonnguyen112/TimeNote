@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+    
 import org.springframework.http.HttpStatus;
 
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,8 @@ import com.TimeNote.CourseService.entities.Student;
 import com.TimeNote.CourseService.respository.StudentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.FileContent;
+
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -60,7 +63,7 @@ public class StudentService {
         if (existStudent == null) {
             String reduceLink = fileW.getWebContentLink().replace("&export=download", "");
             Student student = Student.builder()
-                    .studentName(studentRequest.getStudentName())
+                    .studentName(studentRequest.getStudentName()) 
                     .studentCode(studentRequest.getStudentCode())
                     .studentImageUrl(reduceLink)
                     .build();

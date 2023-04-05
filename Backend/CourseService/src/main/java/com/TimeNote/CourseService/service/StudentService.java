@@ -9,11 +9,9 @@ import java.io.FileOutputStream;
 
 import com.TimeNote.CourseService.entities.CourseDetail;
 import com.TimeNote.CourseService.exceptions.AppException;
-import com.TimeNote.CourseService.respository.CourseDetailRepository;
+import com.TimeNote.CourseService.repository.CourseDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +19,7 @@ import com.TimeNote.CourseService.config.DriveConfig;
 import com.TimeNote.CourseService.dto.StudentRequest;
 import com.TimeNote.CourseService.dto.StudentResponse;
 import com.TimeNote.CourseService.entities.Student;
-import com.TimeNote.CourseService.respository.StudentRepository;
+import com.TimeNote.CourseService.repository.StudentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.FileContent;
 
@@ -56,17 +54,18 @@ public class StudentService {
     public StudentResponse addStudent(String studentRequestString, MultipartFile file)
             throws IOException, GeneralSecurityException {
         
-        File converFile = convert(file);
-        com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
-        newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS"))
-                .setName(file.getOriginalFilename());
-        FileContent mediaContent = new FileContent("image/jpeg", converFile);
-        com.google.api.services.drive.model.File fileW = googleDrive.getService().files()
-                .create(newGGDriveFile, mediaContent).setFields("id,webViewLink,webContentLink").execute();
+
         ObjectMapper objectMapper = new ObjectMapper();
         StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
         Student existStudent = studentRepository.findByStudentCode(studentRequest.getStudentCode());
         if (existStudent == null) {
+            File converFile = convert(file);
+            com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
+            newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS"))
+                    .setName(file.getOriginalFilename());
+            FileContent mediaContent = new FileContent("image/jpeg", converFile);
+            com.google.api.services.drive.model.File fileW = googleDrive.getService().files()
+                    .create(newGGDriveFile, mediaContent).setFields("id,webViewLink,webContentLink").execute();
             String reduceLink = fileW.getWebContentLink().replace("&export=download", "");
             Student student = Student.builder()
                     .studentName(studentRequest.getStudentName())
@@ -151,5 +150,10 @@ public class StudentService {
         }
 
         return convFile;
+    }
+
+    public List<StudentResponse> getAllStudents() {
+        List<Student> students = studentRepository.findAll();
+        return students.stream().map(student -> mapToStudentResponse(student)).toList();
     }
 }

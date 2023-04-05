@@ -13,13 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentRequest {
-    
-    @Column(nullable = false)
     private String studentName;
-    @Column(nullable = false)
     private String studentCode;
-    private String studentImageUrl;
-
-  
-
 }

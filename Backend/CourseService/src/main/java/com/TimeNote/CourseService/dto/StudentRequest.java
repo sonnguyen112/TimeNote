@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentResponse {
-    private Long studentID;
+public class StudentRequest {
     private String studentName;
     private String studentCode;
-    private String studentImageUrl;
-
 }

@@ -17,6 +17,7 @@ import com.google.api.services.drive.Drive;
 
 @Component
 public class DriveConfig {
+    // @Bean
 
     public Drive getService() throws GeneralSecurityException, IOException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -35,8 +36,9 @@ public class DriveConfig {
                 .setJsonFactory(jsonFactory)
                 .setServiceAccountId("timenotestorage@timenotestorage.iam.gserviceaccount.com")
                 .setServiceAccountScopes(elenco)
-                .setServiceAccountPrivateKeyFromP12File(new File(
-                        "CourseService/src/main/java/com/TimeNote/CourseService/config/fileConfig/timenotestorage-8253a109ee9b.p12"))
+                .setServiceAccountPrivateKeyFromP12File(new
+                        File("./CourseService/src/main/java/com/TimeNote/CourseService/config/fileConfig/timenotestorage-8253a109ee9b.p12"))
+              
                 .build();
     }
 }

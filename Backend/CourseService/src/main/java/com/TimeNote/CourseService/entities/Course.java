@@ -18,7 +18,9 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long courseID;
+    @Column(nullable = false)
     private String courseName;
+    @Column(nullable = false)
     private String courseCode;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(
@@ -26,5 +28,4 @@ public class Course {
             referencedColumnName = "courseID"
     )
     private List<CourseDetail> courseDetails;
-
 }

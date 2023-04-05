@@ -45,4 +45,17 @@ public class CourseDetail {
             )
     )
     private List<Student> students;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "CourseDetailLecturerMap",
+            joinColumns = @JoinColumn(
+                    name = "course_detail_id",
+                    referencedColumnName = "courseDetailID"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "lecturer_id",
+                    referencedColumnName = "lecturerID"
+            )
+    )
+    private List<Lecturer> lecturers;
 }

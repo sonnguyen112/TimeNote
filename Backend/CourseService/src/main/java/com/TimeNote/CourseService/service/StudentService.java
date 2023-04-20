@@ -32,11 +32,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.FileContent;
+
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.Drive.Channels.Stop;
 import com.google.api.services.drive.model.About.StorageQuota;
 
-import lombok.extern.slf4j.Slf4j;
+
 
 @Service
 @Slf4j
@@ -68,9 +69,7 @@ public class StudentService {
 
     public StudentResponse addStudent(String studentRequestString, MultipartFile file)
             throws IOException, GeneralSecurityException {
-        
-        // kafkaProducer.send(new Message());
-        
+
         ObjectMapper objectMapper = new ObjectMapper();
         StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
         Student existStudent = studentRepository.findByStudentCode(studentRequest.getStudentCode());
@@ -120,6 +119,7 @@ public class StudentService {
             FileContent mediaContent = new FileContent("image/jpeg", converFile);
             com.google.api.services.drive.model.File fileW = googleDrive.getService().files()
                     .create(newGGDriveFile, mediaContent).setFields("id,webViewLink,webContentLink").execute();
+            DeleteFolder(converFile);
             String reduceLink = fileW.getWebContentLink().replace("&export=download", "");
             ObjectMapper objectMapper = new ObjectMapper();
             StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
@@ -127,12 +127,12 @@ public class StudentService {
             student.setStudentCode(studentRequest.getStudentCode());
             student.setStudentImageUrl(reduceLink);
             studentRepository.save(student);
-        } 
-        else {
-        
+
+        } else {
+
             ObjectMapper objectMapper = new ObjectMapper();
             StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
-            
+
             student.setStudentName(studentRequest.getStudentName());
             student.setStudentCode(studentRequest.getStudentCode());
             studentRepository.save(student);
@@ -164,7 +164,7 @@ public class StudentService {
             convFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(convFile);
             fos.write(file.getBytes());
-            fos.close(); // IOUtils.closeQuietly(fos);
+            fos.close();
         } catch (IOException e) {
             convFile = null;
         }
@@ -176,5 +176,12 @@ public class StudentService {
       
         List<Student> students = studentRepository.findAll();
         return students.stream().map(student -> mapToStudentResponse(student)).toList();
+
+    public void DeleteFolder(File myObj) {
+        if (myObj.delete()) {
+            System.out.println("Deleted the file: " + myObj.getName());
+        } else {
+            System.out.println("Failed to delete the file.");
+        }
     }
 }

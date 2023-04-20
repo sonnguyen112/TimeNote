@@ -1,6 +1,5 @@
 package com.TimeNote.CourseService.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +16,5 @@ public class StudentResponse {
     @Column(nullable = false)
     private String studentCode;
     private String studentImageUrl;
-   
+
 }

@@ -6,6 +6,8 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -26,6 +28,7 @@ public class DriveConfig {
                 .build();
     }
 
+    // @Bean
     public GoogleCredential googleCredential() throws GeneralSecurityException, IOException {
         Collection<String> elenco = new ArrayList<String>();
         elenco.add("https://www.googleapis.com/auth/drive");
@@ -37,7 +40,7 @@ public class DriveConfig {
                 .setServiceAccountId("timenotestorage@timenotestorage.iam.gserviceaccount.com")
                 .setServiceAccountScopes(elenco)
                 .setServiceAccountPrivateKeyFromP12File(new
-                        File("./CourseService/src/main/java/com/TimeNote/CourseService/config/fileConfig/timenotestorage-8253a109ee9b.p12"))
+                        File("src/main/java/com/TimeNote/CourseService/config/fileConfig/timenotestorage-8253a109ee9b.p12"))
               
                 .build();
     }

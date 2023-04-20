@@ -2,14 +2,21 @@ package com.TimeNote.CourseService.service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
 import java.io.File;
 import java.io.FileOutputStream;
 
 import com.TimeNote.CourseService.entities.CourseDetail;
 import com.TimeNote.CourseService.exceptions.AppException;
+import com.TimeNote.CourseService.kafka.KafkaProducer;
+import com.TimeNote.CourseService.kafka.Message;
 import com.TimeNote.CourseService.repository.CourseDetailRepository;
+import com.TimeNote.CourseService.repository.StudentRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
     
 import org.springframework.http.HttpStatus;
@@ -21,9 +28,13 @@ import com.TimeNote.CourseService.config.DriveConfig;
 import com.TimeNote.CourseService.dto.StudentRequest;
 import com.TimeNote.CourseService.dto.StudentResponse;
 import com.TimeNote.CourseService.entities.Student;
-import com.TimeNote.CourseService.repository.StudentRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.Drive.Channels.Stop;
+import com.google.api.services.drive.model.About.StorageQuota;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,12 +45,14 @@ public class StudentService {
     private final CourseDetailRepository courseDetailRepository;
 
     private final DriveConfig googleDrive;
+    private final KafkaProducer kafkaProducer;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository, CourseDetailRepository courseDetailRepository, DriveConfig googleDrive) {
+    public StudentService(StudentRepository studentRepository, CourseDetailRepository courseDetailRepository, DriveConfig googleDrive, KafkaProducer kafkaProducer) {
         this.studentRepository = studentRepository;
         this.courseDetailRepository = courseDetailRepository;
         this.googleDrive = googleDrive;
+        this.kafkaProducer = kafkaProducer;
     }
 
     public List<StudentResponse> getAllStudentsOfCourse(Long id) {
@@ -56,11 +69,14 @@ public class StudentService {
     public StudentResponse addStudent(String studentRequestString, MultipartFile file)
             throws IOException, GeneralSecurityException {
         
-
+        // kafkaProducer.send(new Message());
+        
         ObjectMapper objectMapper = new ObjectMapper();
         StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
         Student existStudent = studentRepository.findByStudentCode(studentRequest.getStudentCode());
         if (existStudent == null) {
+            byte [] byteArr=file.getBytes();
+            kafkaProducer.send(new Message(),byteArr);
             File converFile = convert(file);
             com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
             newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS"))
@@ -96,6 +112,7 @@ public class StudentService {
             throw new AppException(404, "Student not found");
         }
         if (!file.isEmpty()) {
+
             File converFile = convert(file);
             com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
             newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS"))
@@ -103,7 +120,6 @@ public class StudentService {
             FileContent mediaContent = new FileContent("image/jpeg", converFile);
             com.google.api.services.drive.model.File fileW = googleDrive.getService().files()
                     .create(newGGDriveFile, mediaContent).setFields("id,webViewLink,webContentLink").execute();
-            DeleteFolder(converFile);
             String reduceLink = fileW.getWebContentLink().replace("&export=download", "");
             ObjectMapper objectMapper = new ObjectMapper();
             StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
@@ -111,10 +127,12 @@ public class StudentService {
             student.setStudentCode(studentRequest.getStudentCode());
             student.setStudentImageUrl(reduceLink);
             studentRepository.save(student);
-        } else {
+        } 
+        else {
+        
             ObjectMapper objectMapper = new ObjectMapper();
             StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
-
+            
             student.setStudentName(studentRequest.getStudentName());
             student.setStudentCode(studentRequest.getStudentCode());
             studentRepository.save(student);
@@ -146,7 +164,7 @@ public class StudentService {
             convFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(convFile);
             fos.write(file.getBytes());
-            fos.close();
+            fos.close(); // IOUtils.closeQuietly(fos);
         } catch (IOException e) {
             convFile = null;
         }
@@ -155,6 +173,7 @@ public class StudentService {
     }
 
     public List<StudentResponse> getAllStudents() {
+      
         List<Student> students = studentRepository.findAll();
         return students.stream().map(student -> mapToStudentResponse(student)).toList();
     }

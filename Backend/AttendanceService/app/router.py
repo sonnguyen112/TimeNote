@@ -12,18 +12,9 @@ async def consumer():
     await consumer.start()
     try:
         async for msg in consumer:
-            # print("hello")
-            # print(f"Consumed msg: {msg}")
-            # print(msg.value.decode('UTF-8'))
-            a = json.loads(msg.value)
-            a = bytes(a.get("byteArray"),'utf-8')
-            b = base64.b64decode(a)
-            img = Image.open(io.BytesIO(b))
-            img.show()
-
-            # print(msg.value.get("byteArray").decode('UTF-8'))
-            # print(type(msg.value))
-            # print(type(msg.value.decode('UTF-8')))
+          
+            print(f"Consumed msg: {msg}")
+         
     finally:
         await consumer.stop()
 # loop.run_until_complete(consumer())

@@ -40,7 +40,7 @@ import com.google.api.services.drive.model.About.StorageQuota;
 
 
 @Service
-@Slf4j
+// @Slf4j
 public class StudentService {
     private final StudentRepository studentRepository;
     private final CourseDetailRepository courseDetailRepository;
@@ -90,7 +90,7 @@ public class StudentService {
                     .studentImageUrl(reduceLink)
                     .build();
             studentRepository.save(student);
-            log.info("Student" + student.getStudentID() + "is saved");
+            // log.info("Student" + student.getStudentID() + "is saved");
             return mapToStudentResponse(student);
         } else {
             if (existStudent.isDelete() == true) {
@@ -176,6 +176,7 @@ public class StudentService {
       
         List<Student> students = studentRepository.findAll();
         return students.stream().map(student -> mapToStudentResponse(student)).toList();
+    }
 
     public void DeleteFolder(File myObj) {
         if (myObj.delete()) {

@@ -2,7 +2,7 @@ import base64
 import PIL.Image as Image
 import io
 import json
-from config import loop, KAFKA_BOOTSTRAP_SERVERS,KAFKA_CONSUMER_GROUP,KAFKA_TOPIC
+from .config import loop, KAFKA_BOOTSTRAP_SERVERS,KAFKA_CONSUMER_GROUP,KAFKA_TOPIC
 from aiokafka import AIOKafkaConsumer
 from fastapi import APIRouter
 router = APIRouter()

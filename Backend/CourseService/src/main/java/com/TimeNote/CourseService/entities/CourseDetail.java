@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "CourseDetailTable")
+@Table(name = "CourseDetailTable",uniqueConstraints = {@UniqueConstraint(columnNames = {"class_id", "course_id"})})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,7 +30,7 @@ public class CourseDetail {
             name = "class_id",
             referencedColumnName = "classID"
     )
-    private Class aClass;
+    private RegClass regClass;
     private List<LocalDateTime> timeStarts;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(

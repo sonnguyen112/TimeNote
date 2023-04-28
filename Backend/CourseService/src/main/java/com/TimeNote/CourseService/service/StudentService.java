@@ -69,7 +69,6 @@ public class StudentService {
 
     public StudentResponse addStudent(String studentRequestString, MultipartFile file)
             throws IOException, GeneralSecurityException {
-
         ObjectMapper objectMapper = new ObjectMapper();
         StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
         Student existStudent = studentRepository.findByStudentCode(studentRequest.getStudentCode());
@@ -83,6 +82,7 @@ public class StudentService {
             FileContent mediaContent = new FileContent("image/jpeg", converFile);
             com.google.api.services.drive.model.File fileW = googleDrive.getService().files()
                     .create(newGGDriveFile, mediaContent).setFields("id,webViewLink,webContentLink").execute();
+            DeleteFolder(converFile);
             String reduceLink = fileW.getWebContentLink().replace("&export=download", "");
             Student student = Student.builder()
                     .studentName(studentRequest.getStudentName()) 
@@ -101,6 +101,14 @@ public class StudentService {
             }
         }
 
+    }
+
+    private void DeleteFolder(File myObj) {
+        if (myObj.delete()) {
+            System.out.println("Deleted the file: " + myObj.getName());
+        } else {
+            System.out.println("Failed to delete the file.");
+        }
     }
 
     public StudentResponse editOneStudent(String studentRequestString, String id, MultipartFile file)
@@ -176,13 +184,5 @@ public class StudentService {
       
         List<Student> students = studentRepository.findAll();
         return students.stream().map(student -> mapToStudentResponse(student)).toList();
-    }
-
-    public void DeleteFolder(File myObj) {
-        if (myObj.delete()) {
-            System.out.println("Deleted the file: " + myObj.getName());
-        } else {
-            System.out.println("Failed to delete the file.");
-        }
     }
 }

@@ -30,8 +30,7 @@ public class StudentController {
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
-
-    @GetMapping(path = "/all")
+    @GetMapping(path="/all")
     public ResponseEntity<List<StudentResponse>> getAllStudents(){
         return ResponseEntity.status(HttpStatus.OK).body(studentService.getAllStudents());
     }
@@ -46,6 +45,12 @@ public class StudentController {
             @RequestParam("image") MultipartFile file) throws IOException, GeneralSecurityException {
         return ResponseEntity.status(HttpStatus.OK).body(studentService.addStudent(studentRequest, file));
     }
+
+    // @GetMapping
+    // @ResponseStatus(HttpStatus.OK)
+    // public StudentResponse getOneStudent(@PathVariable String studentID){
+    //    return studentService.getOneStudent(studentID);
+    // }
 
     @PutMapping
     public ResponseEntity<StudentResponse> editOneStudent(@RequestParam("body") String studentRequest,

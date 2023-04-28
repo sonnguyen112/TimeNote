@@ -1,5 +1,6 @@
 package com.TimeNote.CourseService.dto;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StudentResponse {
     private Long studentID;
+    
     private String studentName;
+    
     private String studentCode;
     private String studentImageUrl;
 

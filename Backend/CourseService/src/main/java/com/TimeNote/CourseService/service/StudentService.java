@@ -2,15 +2,24 @@ package com.TimeNote.CourseService.service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
 import java.io.File;
 import java.io.FileOutputStream;
 
 import com.TimeNote.CourseService.entities.CourseDetail;
 import com.TimeNote.CourseService.exceptions.AppException;
+import com.TimeNote.CourseService.kafka.KafkaProducer;
+import com.TimeNote.CourseService.kafka.Message;
 import com.TimeNote.CourseService.repository.CourseDetailRepository;
+import com.TimeNote.CourseService.repository.StudentRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+    
+import org.springframework.http.HttpStatus;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,24 +28,32 @@ import com.TimeNote.CourseService.config.DriveConfig;
 import com.TimeNote.CourseService.dto.StudentRequest;
 import com.TimeNote.CourseService.dto.StudentResponse;
 import com.TimeNote.CourseService.entities.Student;
-import com.TimeNote.CourseService.repository.StudentRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.FileContent;
-import lombok.extern.slf4j.Slf4j;
+
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.Drive.Channels.Stop;
+import com.google.api.services.drive.model.About.StorageQuota;
+
+
 
 @Service
-@Slf4j
+// @Slf4j
 public class StudentService {
     private final StudentRepository studentRepository;
     private final CourseDetailRepository courseDetailRepository;
 
     private final DriveConfig googleDrive;
+    private final KafkaProducer kafkaProducer;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository, CourseDetailRepository courseDetailRepository, DriveConfig googleDrive) {
+    public StudentService(StudentRepository studentRepository, CourseDetailRepository courseDetailRepository, DriveConfig googleDrive, KafkaProducer kafkaProducer) {
         this.studentRepository = studentRepository;
         this.courseDetailRepository = courseDetailRepository;
         this.googleDrive = googleDrive;
+        this.kafkaProducer = kafkaProducer;
     }
 
     public List<StudentResponse> getAllStudentsOfCourse(Long id) {
@@ -56,6 +73,8 @@ public class StudentService {
         StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
         Student existStudent = studentRepository.findByStudentCode(studentRequest.getStudentCode());
         if (existStudent == null) {
+            byte [] byteArr=file.getBytes();
+            kafkaProducer.send(new Message(),byteArr);
             File converFile = convert(file);
             com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
             newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS"))
@@ -66,12 +85,12 @@ public class StudentService {
             DeleteFolder(converFile);
             String reduceLink = fileW.getWebContentLink().replace("&export=download", "");
             Student student = Student.builder()
-                    .studentName(studentRequest.getStudentName())
+                    .studentName(studentRequest.getStudentName()) 
                     .studentCode(studentRequest.getStudentCode())
                     .studentImageUrl(reduceLink)
                     .build();
             studentRepository.save(student);
-            log.info("Student" + student.getStudentID() + "is saved");
+            // log.info("Student" + student.getStudentID() + "is saved");
             return mapToStudentResponse(student);
         } else {
             if (existStudent.isDelete() == true) {
@@ -100,6 +119,7 @@ public class StudentService {
             throw new AppException(404, "Student not found");
         }
         if (!file.isEmpty()) {
+
             File converFile = convert(file);
             com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
             newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS"))
@@ -115,7 +135,9 @@ public class StudentService {
             student.setStudentCode(studentRequest.getStudentCode());
             student.setStudentImageUrl(reduceLink);
             studentRepository.save(student);
+
         } else {
+
             ObjectMapper objectMapper = new ObjectMapper();
             StudentRequest studentRequest = objectMapper.readValue(studentRequestString, StudentRequest.class);
 
@@ -159,6 +181,7 @@ public class StudentService {
     }
 
     public List<StudentResponse> getAllStudents() {
+      
         List<Student> students = studentRepository.findAll();
         return students.stream().map(student -> mapToStudentResponse(student)).toList();
     }

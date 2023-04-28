@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from .routers import face_recoginition
 
 
 app = FastAPI()
+
+app.include_router(face_recoginition.router)
 
 origins = ["*"]
 

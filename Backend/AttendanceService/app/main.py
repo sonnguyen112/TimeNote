@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from . import router  
+import asyncio
 from .routers import face_recoginition
 
 
@@ -20,3 +22,6 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+app.include_router(router.router)
+asyncio.create_task(router.consumer())

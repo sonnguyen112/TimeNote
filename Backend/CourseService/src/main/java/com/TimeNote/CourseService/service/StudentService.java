@@ -74,7 +74,8 @@ public class StudentService {
         Student existStudent = studentRepository.findByStudentCode(studentRequest.getStudentCode());
         if (existStudent == null) {
             byte [] byteArr=file.getBytes();
-            kafkaProducer.send(new Message(),byteArr);
+            String studentCode = studentRequest.getStudentCode();
+            kafkaProducer.send(new Message(),byteArr, studentCode);
             File converFile = convert(file);
             com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
             newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS"))

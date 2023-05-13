@@ -11,12 +11,16 @@ public class Message {
     
     private Instant time;
     private byte[] byteArray;
+    private String studentCode;
 
     public void setTime(Instant time) {
         this.time = time;
     }
     public void setImage(byte[] byteArray){
         this.byteArray = byteArray;
+    }
+    public void setStudentCode(String studentCode) {
+        this.studentCode = studentCode;
     }
     
 

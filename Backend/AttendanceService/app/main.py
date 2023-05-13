@@ -1,13 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from . import router  
 import asyncio
-from .routers import face_recoginition
+from .routers import course_activation, student_management, kafka_router
+import uvicorn
 
 
 app = FastAPI()
 
-app.include_router(face_recoginition.router)
+app.include_router(course_activation.router)
+app.include_router(student_management.router)
+app.include_router(kafka_router.router)
 
 origins = ["*"]
 
@@ -23,5 +25,4 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
-app.include_router(router.router)
-asyncio.create_task(router.consumer())
+asyncio.create_task(kafka_router.consumer())

@@ -199,5 +199,4 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,java
-AttendanceService/venv/
-AttendanceService/app/__pycache__
+.env

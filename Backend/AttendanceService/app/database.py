@@ -1,18 +1,18 @@
-import mysql.connector
-import time
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from .config import settings
 
-while 1:
+SQLALCHEMY_DATABASE_URL = f"mysql+mysqlconnector://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}"
+engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
     try:
-        mydb = mysql.connector.connect(
-            host="localhost",
-            user=settings.database_username,
-            password=settings.database_password,
-            database=settings.database_name
-        )
-        cursor = mydb.cursor()
-        print("Connected to MySQL")
-        break
-    except Exception as e:
-        print("Error when connect database: ", e)
-        time.sleep(2)
+        yield db
+    finally:
+        db.close()
+

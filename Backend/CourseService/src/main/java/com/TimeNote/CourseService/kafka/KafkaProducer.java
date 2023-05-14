@@ -19,9 +19,13 @@ public class KafkaProducer {
 
     }
 
-    public void send(Message message,byte[] byteImage) {
+  
+
+    public void send(Message message,byte[] byteImage, String studentCode) {
         message.setTime(Instant.now());
         message.setByteArray(byteImage);
+        message.setStudentCode(studentCode);
+        
         kafkaTemplate.send(topicName, message);
     }
 }

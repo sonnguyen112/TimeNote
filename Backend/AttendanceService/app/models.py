@@ -5,7 +5,7 @@ class FaceEncoding(Base):
     __tablename__ = "faceencoding"
     id = Column(BigInteger, primary_key=True, nullable=False)
     student_id = Column(String(20), nullable=False)
-    face_encoding = Column(String(255), nullable=False)
+    face_encoding = Column(String(6000), nullable=False)
 
 class CourseActivation(Base):
     __tablename__ = "courseactivation"

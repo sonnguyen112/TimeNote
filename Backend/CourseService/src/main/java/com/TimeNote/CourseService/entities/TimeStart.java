@@ -6,20 +6,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalTime;
 
-@Entity
-@Table(name = "CourseTable")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class Course {
+@Entity
+@Table(name = "TimeStartTable")
+public class TimeStart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long courseID;
-    @Column(nullable = false)
-    private String courseName;
-    @Column(nullable = false)
-    private String courseCode;
+    private Long id;
+    private int dayOfWeek;
+    private LocalTime startCourseTime;
 }

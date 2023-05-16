@@ -15,7 +15,7 @@ import java.util.List;
 public class CourseDetailRequest {
     private String courseCode;
     private String classCode;
-    private List<LocalDateTime> timeStarts;
+    private List<String> timeStarts; // format: 2 7:30
     private List<String> studentCodes;
     private List<String> lectureCodes;
 }

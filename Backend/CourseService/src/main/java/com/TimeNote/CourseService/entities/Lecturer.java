@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Lecturer {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long lecturerID;
     @Column(nullable = false)
     private String lecturerName;

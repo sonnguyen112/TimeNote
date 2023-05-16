@@ -5,23 +5,27 @@ import com.TimeNote.CourseService.dto.CourseDetailResponse;
 import com.TimeNote.CourseService.entities.*;
 import com.TimeNote.CourseService.exceptions.AppException;
 import com.TimeNote.CourseService.repository.*;
+import com.google.api.client.util.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseDetailService {
     private final CourseDetailRepository courseDetailRepository;
-    private final RegClassRepository regClassRepository;
     private final CourseRepository courseRepository;
     private final StudentRepository studentRepository;
     private final LecturerRepository lecturerRepository;
 
     @Autowired
-    public CourseDetailService(CourseDetailRepository courseDetailRepository, RegClassRepository regClassRepository, CourseRepository courseRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository) {
+    public CourseDetailService(CourseDetailRepository courseDetailRepository, CourseRepository courseRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository) {
         this.courseDetailRepository = courseDetailRepository;
-        this.regClassRepository = regClassRepository;
         this.courseRepository = courseRepository;
         this.studentRepository = studentRepository;
         this.lecturerRepository = lecturerRepository;
@@ -32,10 +36,6 @@ public class CourseDetailService {
                 courseDetailRequest.getClassCode(), courseDetailRequest.getCourseCode());
         if (courseDetailExist != null){
             throw new AppException(409, "Course is exist");
-        }
-        RegClass classExist = regClassRepository.findByClassCode(courseDetailRequest.getClassCode());
-        if (classExist == null){
-            throw new AppException(404, "Class is not exist");
         }
         Course courseExist = courseRepository.findByCourseCode(courseDetailRequest.getCourseCode());
         if (courseExist == null){
@@ -55,13 +55,26 @@ public class CourseDetailService {
         }
         CourseDetail newCourseDetail = CourseDetail.builder()
                 .course(courseExist)
-                .regClass(classExist)
-                .timeStarts(courseDetailRequest.getTimeStarts())
+                .classCode(courseDetailRequest.getClassCode())
+                .timeStarts(stringToTimeStart(courseDetailRequest.getTimeStarts()))
                 .students(students)
                 .lecturers(lecturers)
                 .build();
         courseDetailRepository.save(newCourseDetail);
         return mapToCourseDetailResponse(newCourseDetail);
+    }
+
+    private List<TimeStart> stringToTimeStart(List<String> timeStarts) {
+        ArrayList<TimeStart> timeStartArrayList = new ArrayList<>();
+        for (int i = 0; i < timeStarts.size(); i++){
+            String[] splitTimeStart = timeStarts.get(i).split(" ");
+            TimeStart timeStart = TimeStart.builder()
+                    .startCourseTime(LocalTime.parse(splitTimeStart[1], DateTimeFormatter.ofPattern("H:m")))
+                    .dayOfWeek(Integer.valueOf(splitTimeStart[0]))
+                    .build();
+            timeStartArrayList.add(timeStart);
+        }
+        return timeStartArrayList;
     }
 
     private CourseDetailResponse mapToCourseDetailResponse(CourseDetail newCourseDetail) {

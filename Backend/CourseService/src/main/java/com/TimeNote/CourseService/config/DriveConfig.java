@@ -38,7 +38,7 @@ public class DriveConfig {
 
 
                 .setServiceAccountPrivateKeyFromP12File(new File(
-                        "CourseService/src/main/java/com/TimeNote/CourseService/config/fileConfig/timenotestorage-8253a109ee9b.p12"))
+                        "src/main/java/com/TimeNote/CourseService/config/fileConfig/timenotestorage-8253a109ee9b.p12"))
 
                 .build();
     }

@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.TimeNote.CourseService.dto.StudentResponse;
 import com.TimeNote.CourseService.service.StudentService;
 
-@RequestMapping("/api/student")
+@RequestMapping("/course_api/student")
 @RestController
 public class StudentController {
 

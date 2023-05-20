@@ -4,17 +4,15 @@ import com.TimeNote.CourseService.dto.CourseRequest;
 import com.TimeNote.CourseService.dto.CourseResponse;
 import com.TimeNote.CourseService.dto.LecturerRequest;
 import com.TimeNote.CourseService.dto.LecturerResponse;
+import com.TimeNote.CourseService.exceptions.AppException;
 import com.TimeNote.CourseService.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/course")
+@RequestMapping("/course_api/course")
 public class CourseController {
     private final CourseService courseService;
 
@@ -24,7 +22,10 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<CourseResponse> addLecturer(@RequestBody CourseRequest courseRequest){
-        return ResponseEntity.status(HttpStatus.OK).body(courseService.addCourse(courseRequest));
+    public ResponseEntity<CourseResponse> addLecturer(@RequestBody CourseRequest courseRequest, @RequestHeader("role") String role){
+        if (role.equals("teacher")) {
+            return ResponseEntity.status(HttpStatus.OK).body(courseService.addCourse(courseRequest));
+        }
+        throw new AppException(400, "You are not authorized");
     }
 }

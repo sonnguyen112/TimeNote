@@ -53,7 +53,7 @@ services:
     volumes:
       - .m2:/root/.m2
 
-  springbootapp:
+  courseservice:
     depends_on:
       - mysqldb
       - discoveryserver
@@ -77,13 +77,38 @@ services:
     stdin_open: true
     tty: true
 
-  # gatewayserver:
-  #   depends_on:
-  #     - discoveryserver
-  #   build: ./gateway-server
-  #   restart: on-failure
+  gatewayserver:
+    depends_on:
+      - discoveryserver
+    build: ./gateway-server
+    restart: on-failure
+    ports:
+      - "8085:8085"
+    environment:
+      DISCOVERY_HOST: discoveryserver
+    volumes:
+      - .m2:/root/.m2
 
-  fastapiapp:
+  authservice:
+    depends_on:
+        - mysqldb
+        - discoveryserver
+    build: ./auth_service
+    restart: on-failure
+    environment:
+      DB_HOST: mysqldb
+      DB_NAME: timenoteauthservice
+      DB_PASSWORD: Khoi2921432
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DISCOVERY_HOST: discoveryserver
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+
+  attendanceservice:
     depends_on:
       - mysqldb
       - discoveryserver

@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "CourseDetailTable",uniqueConstraints = {@UniqueConstraint(columnNames = {"class_id", "course_id"})})
+@Table(name = "CourseDetailTable",uniqueConstraints = {@UniqueConstraint(columnNames = {"course_id"})})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class CourseDetail {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseDetailID;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
@@ -25,13 +25,21 @@ public class CourseDetail {
             referencedColumnName = "courseID"
     )
     private Course course;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(
-            name = "class_id",
-            referencedColumnName = "classID"
+    @Column(nullable = false)
+    private String classCode;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "CourseDetailTimeStartMap",
+            joinColumns = @JoinColumn(
+                    name = "course_detail_id",
+                    referencedColumnName = "courseDetailID"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "time_start_id",
+                    referencedColumnName = "id"
+            )
     )
-    private RegClass regClass;
-    private List<LocalDateTime> timeStarts;
+    private List<TimeStart> timeStarts;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "CourseDetailStudentMap",

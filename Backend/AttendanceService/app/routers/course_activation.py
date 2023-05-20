@@ -8,7 +8,7 @@ router = APIRouter(
 )
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=schemas.ActiveToggleResponse)
-async def active_toggle(request:schemas.ActiveToggleRequest): # Change status of host(Attendance/Not Attendance)
+async def active_toggle(course_id:str): # Change status of host(Attendance/Not Attendance)
     # Code is here
     response = {
         "is_active": False

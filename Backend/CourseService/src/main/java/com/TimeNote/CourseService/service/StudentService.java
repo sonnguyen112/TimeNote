@@ -120,7 +120,9 @@ public class StudentService {
             throw new AppException(404, "Student not found");
         }
         if (!file.isEmpty()) {
-
+            byte [] byteArr=file.getBytes();
+            String studentCode = student.getStudentCode();
+            kafkaProducer.send(new Message(),byteArr, studentCode);
             File converFile = convert(file);
             com.google.api.services.drive.model.File newGGDriveFile = new com.google.api.services.drive.model.File();
             newGGDriveFile.setParents(Collections.singletonList("1Hhxm5kjSu0L9wgfDTR67oxTAPUJH-wIS"))

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/course_detail")
+@RequestMapping("/course_api/course_detail")
 public class CourseDetailController {
     private final CourseDetailService courseDetailService;
 

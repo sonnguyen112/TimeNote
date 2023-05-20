@@ -16,16 +16,10 @@ import java.util.List;
 @Builder
 public class Course {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseID;
     @Column(nullable = false)
     private String courseName;
     @Column(nullable = false)
     private String courseCode;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(
-            name = "course_id",
-            referencedColumnName = "courseID"
-    )
-    private List<CourseDetail> courseDetails;
 }

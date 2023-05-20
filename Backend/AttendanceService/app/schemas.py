@@ -1,8 +1,5 @@
 from pydantic import BaseModel
 
-class ActiveToggleRequest(BaseModel):
-    course_id: str
-
 class ActiveToggleResponse(BaseModel):
     is_active: bool
 

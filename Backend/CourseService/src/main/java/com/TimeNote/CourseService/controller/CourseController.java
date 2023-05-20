@@ -26,6 +26,6 @@ public class CourseController {
         if (role.equals("teacher")) {
             return ResponseEntity.status(HttpStatus.OK).body(courseService.addCourse(courseRequest));
         }
-        throw new AppException(400, "You are not authorized");
+        throw new AppException(403, "You are not authorized");
     }
 }

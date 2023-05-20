@@ -77,6 +77,12 @@ services:
     stdin_open: true
     tty: true
 
+  # gatewayserver:
+  #   depends_on:
+  #     - discoveryserver
+  #   build: ./gateway-server
+  #   restart: on-failure
+
   fastapiapp:
     depends_on:
       - mysqldb

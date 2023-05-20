@@ -1,54 +1,68 @@
 package com.TimeNote.gatewayserver.security;
 
-import com.TimeNote.gatewayserver.utils.JwtUtil;
-import com.google.common.net.HttpHeaders;
+
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.function.Predicate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+
+import com.TimeNote.gatewayserver.exception.JwtTokenMalformedException;
+import com.TimeNote.gatewayserver.exception.JwtTokenMissingException;
+import com.TimeNote.gatewayserver.utils.JwtUtil;
+
+import io.jsonwebtoken.Claims;
 
 @Component
-public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
-
-    private final RouteValidator validator;
-    private final JwtUtil jwtUtil;
+public class AuthenticationFilter implements GatewayFilter{
 
     @Autowired
-    public AuthenticationFilter(RouteValidator validator, JwtUtil jwtUtil) {
-        super(Config.class);
-        this.validator = validator;
-        this.jwtUtil = jwtUtil;
-    }
+	private JwtUtil jwtUtil;
 
-    @Override
-    public GatewayFilter apply(Config config) {
-        return ((exchange, chain) -> {
-            if (validator.isSecured.test((ServerHttpRequest) exchange.getRequest())) {
-                //header contains token or not
-                if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    throw new RuntimeException("missing authorization header");
-                }
+	@Override
+	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+		ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
 
-                String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
-                if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                    authHeader = authHeader.substring(7);
-                }
-                try {
-//                    //REST call to AUTH service
-//                    template.getForObject("http://IDENTITY-SERVICE//validate?token" + authHeader, String.class);
-                    jwtUtil.validateToken(authHeader);
+		final List<String> apiEndpoints = List.of("/user/register", "/user/login");
 
-                } catch (Exception e) {
-                    System.out.println("invalid access...!");
-                    throw new RuntimeException("un authorized access to application");
-                }
-            }
-            return chain.filter(exchange);
-        });
-    }
+		Predicate<ServerHttpRequest> isApiSecured = r -> apiEndpoints.stream()
+				.noneMatch(uri -> r.getURI().getPath().contains(uri));
 
-    public static class Config {
+		if (isApiSecured.test(request)) {
+			if (!request.getHeaders().containsKey("Authorization")) {
+				ServerHttpResponse response = exchange.getResponse();
+				response.setStatusCode(HttpStatus.UNAUTHORIZED);
 
-    }
+				return response.setComplete();
+			}
+
+			final String token = request.getHeaders().getOrEmpty("Authorization").get(0);
+
+			try {
+				jwtUtil.validateToken(token);
+			} catch (JwtTokenMalformedException | JwtTokenMissingException e) {
+				// e.printStackTrace();
+
+				ServerHttpResponse response = exchange.getResponse();
+				response.setStatusCode(HttpStatus.BAD_REQUEST);
+
+				return response.setComplete();
+			}
+
+			Claims claims = jwtUtil.getClaims(token);
+			exchange.getRequest().mutate().header("id", String.valueOf(claims.get("id")))
+					.header("role", String.valueOf(claims.get("role"))).build();
+		}
+
+		return chain.filter(exchange);
+	}
+
 }

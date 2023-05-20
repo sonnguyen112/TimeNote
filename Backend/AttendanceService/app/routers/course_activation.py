@@ -3,7 +3,7 @@ from .. import schemas
 from typing import List
 
 router = APIRouter(
-    prefix="/course_activation",
+    prefix="/attendance_api/course_activation",
     tags=["course_activation"]
 )
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, status
 from .. import schemas
 
 router = APIRouter(
-    prefix="/student_management",
+    prefix="/attendance_api/student_management",
     tags=["student_management"]
 )
 

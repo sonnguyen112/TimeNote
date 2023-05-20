@@ -4,18 +4,12 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+import com.TimeNote.CourseService.exceptions.AppException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.TimeNote.CourseService.dto.StudentResponse;
 import com.TimeNote.CourseService.service.StudentService;
@@ -31,19 +25,28 @@ public class StudentController {
         this.studentService = studentService;
     }
     @GetMapping(path="/all")
-    public ResponseEntity<List<StudentResponse>> getAllStudents(){
-        return ResponseEntity.status(HttpStatus.OK).body(studentService.getAllStudents());
+    public ResponseEntity<List<StudentResponse>> getAllStudents(@RequestHeader String role){
+        if (role.equals("teacher")){
+            return ResponseEntity.status(HttpStatus.OK).body(studentService.getAllStudents());
+        }
+        throw new AppException(403, "You are not authorized");
     }
 
     @GetMapping
-    public ResponseEntity<List<StudentResponse>> getAllStudentsOfCourse(@RequestParam("course_detail_id") Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(studentService.getAllStudentsOfCourse(id));
+    public ResponseEntity<List<StudentResponse>> getAllStudentsOfCourse(@RequestParam("course_detail_id") Long id,
+                                                                        @RequestHeader String role){
+        if (role.equals("teacher")){
+            return ResponseEntity.status(HttpStatus.OK).body(studentService.getAllStudentsOfCourse(id));
+        }
+        throw new AppException(403, "You are not authorized");
     }
 
     @PostMapping
     public ResponseEntity<StudentResponse> addStudent(@RequestParam("body") String studentRequest,
-            @RequestParam("image") MultipartFile file) throws IOException, GeneralSecurityException {
-        return ResponseEntity.status(HttpStatus.OK).body(studentService.addStudent(studentRequest, file));
+            @RequestParam("image") MultipartFile file, @RequestHeader String role) throws IOException, GeneralSecurityException {
+        if (role.equals("teacher"))
+            return ResponseEntity.status(HttpStatus.OK).body(studentService.addStudent(studentRequest, file));
+        throw new AppException(403, "You are not authorized");
     }
 
     // @GetMapping
@@ -54,13 +57,18 @@ public class StudentController {
 
     @PutMapping
     public ResponseEntity<StudentResponse> editOneStudent(@RequestParam("body") String studentRequest,
-            @RequestParam("code") String id, @RequestParam("image") MultipartFile file)
+            @RequestParam("code") String id, @RequestParam("image") MultipartFile file, @RequestHeader String role)
             throws IOException, GeneralSecurityException {
-        return ResponseEntity.status(HttpStatus.OK).body(studentService.editOneStudent(studentRequest, id, file));
+        if (role.equals("teacher"))
+            return ResponseEntity.status(HttpStatus.OK).body(studentService.editOneStudent(studentRequest, id, file));
+        throw new AppException(403, "You are not authorized");
     }
 
     @DeleteMapping
-    public ResponseEntity<StudentResponse> deleteOneStudent(@RequestParam("code") String id) {
-        return ResponseEntity.status(HttpStatus.OK).body(studentService.deleteOneStudent(id));
+    public ResponseEntity<StudentResponse> deleteOneStudent(@RequestParam("code") String id,
+                                                            @RequestHeader String role) {
+        if (role.equals("teacher"))
+            return ResponseEntity.status(HttpStatus.OK).body(studentService.deleteOneStudent(id));
+        throw new AppException(403, "You are not authorized");
     }
 }

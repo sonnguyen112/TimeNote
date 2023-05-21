@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from .routers import course_activation, student_management, kafka_router
 import uvicorn
+from .config import settings
 from . import models
 from .database import engine
 from dotenv import load_dotenv
@@ -16,7 +17,7 @@ def register_eureka():
     rest_port = int(os.getenv("SERVER_PORT", 8000))
 
 
-    eureka_client.init(eureka_server="http://localhost:8761/eureka",
+    eureka_client.init(eureka_server=f"http://{settings.discovery_host}:8761/eureka",
                    app_name="attendance-service",
                    instance_port=rest_port)
 

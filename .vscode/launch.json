@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "CourseServiceApplication",
+            "request": "launch",
+            "mainClass": "com.TimeNote.CourseService.CourseServiceApplication",
+            "projectName": "CourseService",
+            "env":{
+                "DB_HOST": "localhost",
+                "DB_NAME":"timenotecourseservice",
+                "DB_PASSWORD":"Khoi2921432",
+                "DB_PORT":"3306",
+                "DB_USERNAME":"root",
+                "KAFKA_CLIENT_ID":"transport_image_producer",
+                "KAFKA_HOST": "localhost",
+                "KAFKA_PORT": "9092",
+                "KAFKA_TOPIC_NAME": "transport_image"
+            }
+        }
+    ]
+}

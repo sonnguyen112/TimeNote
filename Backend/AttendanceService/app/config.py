@@ -1,5 +1,5 @@
 from pydantic import BaseSettings
-import asyncio
+import asyncio 
 import os 
 from dotenv import load_dotenv
 load_dotenv()
@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     database_username: str
     database_password: str
     database_name: str
+    discovery_host: str
 
     class Config:
         env_file = ".env"

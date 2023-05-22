@@ -28,7 +28,7 @@ services:
       
   
   mysqldb:
-    image: mysql:5.7
+    image: mysql
     hostname: mysqldb
     restart: unless-stopped
     env_file: ./.env
@@ -81,9 +81,9 @@ services:
     depends_on:
       - discoveryserver
     build: ./gateway-server
-    restart: on-failure
+    restart: always
     ports:
-      - "8085:8085"
+      - "8201:8201"
     environment:
       DISCOVERY_HOST: discoveryserver
     volumes:
@@ -94,7 +94,7 @@ services:
         - mysqldb
         - discoveryserver
     build: ./auth_service
-    restart: on-failure
+    restart: unless-stopped
     environment:
       DB_HOST: mysqldb
       DB_NAME: timenoteauthservice
@@ -110,10 +110,10 @@ services:
 
   attendanceservice:
     depends_on:
-      - mysqldb
-      - discoveryserver
+      - "mysqldb"
+      - "discoveryserver"
     build: ./AttendanceService
-    restart: on-failure
+    restart: unless-stopped
     tty: true
     environment:
       DATABASE_HOSTNAME: mysqldb
@@ -130,7 +130,7 @@ services:
     volumes:
     - .m2:/root/.m2
     ports:
-      - 8000:8000
+      - "8000:8000"
   
 
 

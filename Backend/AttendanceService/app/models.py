@@ -17,5 +17,5 @@ class CourseActivation(Base):
 class StudentManagement(Base):
     __tablename__ = "studentmanagement"
     id = Column(BigInteger, primary_key=True, nullable=False)
-    student_id = Column(String(20), nullable=False)
+    student_code = Column(String(20), nullable=False)
     course_id = Column(String(20), nullable=False)

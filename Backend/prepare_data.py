@@ -17,13 +17,36 @@ STUDENT_LIST = [
     },
 ]
 
+# register user
+res = requests.post("http://localhost:8201/auth_api/user/register",json=
+        {
+            "userCode" : "00000",
+            "password" : "12345",
+            "passwordConfirm": "12345",
+            "role": "teacher"
+        }  
+)
+print(f"{res.json()}")
+
+# login user
+res = requests.post("http://localhost:8201/auth_api/user/login",json=
+        {
+            "userCode": "00000",
+            "password": "12345"
+        }
+)
+response = res.json()
+print(f"{response}")
+token = response["token"]
+
+
 # Add data lecturer
 for i in range(NUM_LECTURER):
     try:
         res = requests.post("http://localhost:8201/course_api/lecturer",json={
             "lecturerName" : f"Nguyễn Văn {chr(65 + i)}",
             "lecturerCode" : f"0000{i}"
-        })
+        }, headers={"Authorization": f"{token}"})
         print(f"{res.json()}")
     except:
         pass
@@ -35,7 +58,7 @@ for i in range(NUM_LECTURER):
         res = requests.post("http://localhost:8201/course_api/course",json={
             "courseName" : f"Name of Course {i}",
             "courseCode" : f"CS00{i}"
-        })
+        }, headers={"Authorization": f"{token}"})
         print(f"{res.json()}")
     except:
         pass
@@ -47,7 +70,7 @@ for stu in STUDENT_LIST:
             "image": open(f"""sample_img_student//{stu["Code"]}.jpg""", "rb")
         }, data={
             "body": f"""{{"studentName": "{stu["Name"]}", "studentCode":"{stu["Code"]}"}}"""
-        })
+        }, headers={"Authorization": f"{token}"})
         print(f"{res.json()}")
     except:
         pass
@@ -69,5 +92,5 @@ res = requests.post("http://localhost:8201/course_api/course_detail",json={
         "00000",
         "00003"
     ]
-})
+}, headers={"Authorization": f"{token}"})
 print(f"{res.json()}")

@@ -4,6 +4,7 @@ import com.TimeNote.CourseService.dto.CourseDetailRequest;
 import com.TimeNote.CourseService.dto.CourseDetailResponse;
 import com.TimeNote.CourseService.exceptions.AppException;
 import com.TimeNote.CourseService.service.CourseDetailService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class CourseDetailController {
 
     @PostMapping
     public ResponseEntity<CourseDetailResponse> addCourseDetail(@RequestBody CourseDetailRequest courseDetailRequest,
-                                                                @RequestHeader String role){
+                                                                @RequestHeader String role) throws JsonProcessingException {
         if (role.equals("teacher")){
             return ResponseEntity.status(HttpStatus.OK).body(courseDetailService.addCourseDetail(courseDetailRequest));
         }

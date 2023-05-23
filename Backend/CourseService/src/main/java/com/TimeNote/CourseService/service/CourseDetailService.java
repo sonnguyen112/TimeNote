@@ -1,20 +1,24 @@
 package com.TimeNote.CourseService.service;
 
+import com.TimeNote.CourseService.dto.AddStudentToCourseWebClientRequest;
 import com.TimeNote.CourseService.dto.CourseDetailRequest;
 import com.TimeNote.CourseService.dto.CourseDetailResponse;
 import com.TimeNote.CourseService.entities.*;
 import com.TimeNote.CourseService.exceptions.AppException;
 import com.TimeNote.CourseService.repository.*;
-import com.google.api.client.util.DateTime;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CourseDetailService {
@@ -22,16 +26,21 @@ public class CourseDetailService {
     private final CourseRepository courseRepository;
     private final StudentRepository studentRepository;
     private final LecturerRepository lecturerRepository;
+    private final RestTemplate restTemplate;
+
+    private final ObjectMapper objectMapper= new ObjectMapper();
+
 
     @Autowired
-    public CourseDetailService(CourseDetailRepository courseDetailRepository, CourseRepository courseRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository) {
+    public CourseDetailService(CourseDetailRepository courseDetailRepository, CourseRepository courseRepository, StudentRepository studentRepository, LecturerRepository lecturerRepository, RestTemplate restTemplate) {
         this.courseDetailRepository = courseDetailRepository;
         this.courseRepository = courseRepository;
         this.studentRepository = studentRepository;
         this.lecturerRepository = lecturerRepository;
+        this.restTemplate = restTemplate;
     }
 
-    public CourseDetailResponse addCourseDetail(CourseDetailRequest courseDetailRequest) {
+    public CourseDetailResponse addCourseDetail(CourseDetailRequest courseDetailRequest) throws JsonProcessingException {
         CourseDetail courseDetailExist = courseDetailRepository.getCourseDetailByClassCodeAndCourseCode(
                 courseDetailRequest.getClassCode(), courseDetailRequest.getCourseCode());
         if (courseDetailExist != null){
@@ -61,6 +70,18 @@ public class CourseDetailService {
                 .lecturers(lecturers)
                 .build();
         courseDetailRepository.save(newCourseDetail);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<String>(objectMapper.writeValueAsString(
+                AddStudentToCourseWebClientRequest.builder().course_id(String.valueOf(newCourseDetail.getCourseDetailID()))
+                        .student_codes(courseDetailRequest.getStudentCodes())
+                        .build()
+        ), headers);
+        System.out.println(request);
+        String personResultAsJsonStr =
+                restTemplate.postForObject("lb://attendance-service/attendance_api/student_management/",
+                        request, String.class);
+        System.out.println(personResultAsJsonStr);
         return mapToCourseDetailResponse(newCourseDetail);
     }
 

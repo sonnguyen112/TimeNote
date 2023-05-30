@@ -28,14 +28,14 @@ services:
       
   
   mysqldb:
-    image: mysql:5.7
+    image: mysql
     hostname: mysqldb
     restart: unless-stopped
     env_file: ./.env
     environment:
       - MYSQL_ROOT_PASSWORD=$DATABASE_PASSWORD
     ports:
-      - $DATABASE_PORT:$MYSQLDB_DOCKER_PORT
+      - 3306:3306
     command: --init-file /data/application/init.sql
     volumes:
       - ./init.sql:/data/application/init.sql
@@ -80,7 +80,7 @@ services:
     build: ./gateway-server
     restart: on-failure
     ports:
-      - "8085:8085"
+      - "8201:8201"
     environment:
       DISCOVERY_HOST: discoveryserver
     volumes:

@@ -19,8 +19,7 @@ def register_eureka():
 
     eureka_client.init(eureka_server=f"http://{settings.discovery_host}:8761/eureka",
                    app_name="attendance-service",
-                   instance_port=rest_port,
-                   instance_ip_network="127.0.0.1")
+                   instance_port=rest_port)
 
 # Drop all tables
 models.Base.metadata.drop_all(engine)

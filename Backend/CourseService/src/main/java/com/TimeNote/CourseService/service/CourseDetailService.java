@@ -105,4 +105,34 @@ public class CourseDetailService {
                 .courseName(newCourseDetail.getCourse().getCourseName())
                 .build();
     }
+
+    public List<CourseDetailResponse> getCourseDetailByTeacherCode(String userCode) {
+        Lecturer lecturer = lecturerRepository.findByLecturerCode(userCode);
+        if (lecturer == null){
+            throw new AppException(404, "Teacher not exist");
+        }
+        List<CourseDetail> courseByTeacherCode = new ArrayList<>();
+        List<CourseDetail> allCourse = courseDetailRepository.findAll();
+        for (int i = 0; i < allCourse.size(); i++){
+            if (allCourse.get(i).getLecturers().contains(lecturer)){
+                courseByTeacherCode.add(allCourse.get(i));
+            }
+        }
+        return courseByTeacherCode.stream().map(e -> mapToCourseDetailResponse(e)).toList();
+    }
+
+    public List<CourseDetailResponse> getCourseDetailByStudentCode(String userCode) {
+        Student student = studentRepository.findByStudentCode(userCode);
+        if (student == null){
+            throw new AppException(404, "Student not exist");
+        }
+        List<CourseDetail> courseByStudentCode = new ArrayList<>();
+        List<CourseDetail> allCourse = courseDetailRepository.findAll();
+        for (int i = 0; i < allCourse.size(); i++){
+            if (allCourse.get(i).getStudents().contains(student)){
+                courseByStudentCode.add(allCourse.get(i));
+            }
+        }
+        return courseByStudentCode.stream().map(e -> mapToCourseDetailResponse(e)).toList();
+    }
 }

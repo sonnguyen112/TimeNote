@@ -11,10 +11,15 @@ class AddStudentToCourseRequest(BaseModel):
 class AddStudentToCourseResponse(BaseModel):
     message: str
 
-class GetCoursesActiveRequest(BaseModel):
-    student_code: str
-
 class GetCoursesActiveResponse(BaseModel):
     course_id: str
-    course_name: str
-    course_code: str
+    coord: str
+
+class FaceRecognizeRequest(BaseModel):
+    img_base64: str
+    course_id: str
+
+class FaceRecognizeResponse(BaseModel):
+    code: str
+    is_real: bool
+    is_find: bool

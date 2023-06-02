@@ -29,7 +29,6 @@ services:
   
   mysqldb:
     image: mysql
-    hostname: mysqldb
     restart: unless-stopped
     env_file: ./.env
     environment:

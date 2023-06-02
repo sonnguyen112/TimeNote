@@ -11,7 +11,6 @@ class CourseActivation(Base):
     __tablename__ = "courseactivation"
     id = Column(BigInteger, primary_key=True, nullable=False)
     course_id = Column(String(20), nullable=False, unique=True)
-    is_active = Column(Boolean, nullable=False)
     coord = Column(String(20), nullable=False)
 
 class StudentManagement(Base):

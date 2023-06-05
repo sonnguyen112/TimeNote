@@ -33,5 +33,8 @@ async def active_toggle(course_id:str, longtitude: float,latitude: float,db: Ses
 async def get_courses_active(db: Session = Depends(get_db)): # Get all course avaiable
     # Code is here
     response = db.query(models.CourseActivation).all()
-    print(response)
+    response = list(map(lambda x: {
+        "course_id": x.course_id,
+        "coord": x.coord
+    }, response))
     return response

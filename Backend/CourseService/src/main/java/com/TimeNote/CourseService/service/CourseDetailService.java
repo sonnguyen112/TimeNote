@@ -13,6 +13,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalTime;
@@ -39,7 +40,8 @@ public class CourseDetailService {
         this.lecturerRepository = lecturerRepository;
         this.restTemplate = restTemplate;
     }
-
+    
+    @Transactional
     public CourseDetailResponse addCourseDetail(CourseDetailRequest courseDetailRequest) throws JsonProcessingException {
         CourseDetail courseDetailExist = courseDetailRepository.getCourseDetailByClassCodeAndCourseCode(
                 courseDetailRequest.getClassCode(), courseDetailRequest.getCourseCode());

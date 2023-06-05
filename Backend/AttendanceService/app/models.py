@@ -11,10 +11,11 @@ class CourseActivation(Base):
     __tablename__ = "courseactivation"
     id = Column(BigInteger, primary_key=True, nullable=False)
     course_id = Column(String(20), nullable=False, unique=True)
-    coord = Column(String(20), nullable=False)# "long-la"
+    coord = Column(String(20), nullable=False)
 
 class StudentManagement(Base):
     __tablename__ = "studentmanagement"
     id = Column(BigInteger, primary_key=True, nullable=False)
     student_code = Column(String(20), nullable=False)
     course_id = Column(String(20), nullable=False)
+

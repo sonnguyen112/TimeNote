@@ -10,7 +10,7 @@ router = APIRouter(
 )
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=schemas.ActiveToggleResponse)
-async def active_toggle(course_id:str, longitude: float,latitude: float,db: Session = Depends(get_db)): # Change status of host(Attendance/Not Attendance)
+async def active_toggle(course_id:str, longtitude: float,latitude: float,db: Session = Depends(get_db)): # Change status of host(Attendance/Not Attendance)
     # Code is here
     status = False
     records = db.query(models.CourseActivation).filter(models.CourseActivation.course_id==course_id).first()
@@ -18,7 +18,7 @@ async def active_toggle(course_id:str, longitude: float,latitude: float,db: Sess
         db.delete(records)
         status = False
     else:
-        records = models.CourseActivation(course_id=course_id,coord="{}-{}".format(longitude,latitude))
+        records = models.CourseActivation(course_id=course_id,coord="{}-{}".format(longtitude,latitude))
         db.add(records)
         status = True
     db.commit()
@@ -27,8 +27,9 @@ async def active_toggle(course_id:str, longitude: float,latitude: float,db: Sess
     }
     return response
 
-@router.get("/{student_id}", status_code=status.HTTP_200_OK, response_model=List[schemas.GetCoursesActiveResponse])
-async def get_courses_active(request: schemas.GetCoursesActiveRequest): # Get all course which have student and in area 100 metres
+@router.get("/course_avaiable", status_code=status.HTTP_200_OK, response_model=List[schemas.GetCoursesActiveResponse])
+async def get_courses_active(db: Session = Depends(get_db)): # Get all course avaiable
     # Code is here
-    response = {}
+    response = db.query(models.CourseActivation).all()
+    print(response)
     return response

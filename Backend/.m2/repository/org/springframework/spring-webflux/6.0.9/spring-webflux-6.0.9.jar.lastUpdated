@@ -1,5 +1,11 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+<<<<<<< HEAD
 #Mon May 22 13:32:42 UTC 2023
 https\://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates/.lastUpdated=1684762361268
 https\://repo.maven.apache.org/maven2/.lastUpdated=1684762362059
+=======
+#Tue May 30 15:52:32 UTC 2023
+https\://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates/.lastUpdated=1685461923295
+https\://repo.maven.apache.org/maven2/.lastUpdated=1685461952309
+>>>>>>> af813e0821ea4ee829669431a842f9dbf203eaab
 https\://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates/.error=

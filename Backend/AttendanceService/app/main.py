@@ -9,7 +9,7 @@ from .database import engine
 from dotenv import load_dotenv
 import os
 import py_eureka_client.eureka_client as eureka_client
-import threading
+import multiprocessing
 
 load_dotenv()
 
@@ -19,8 +19,7 @@ def register_eureka():
 
     eureka_client.init(eureka_server=f"http://{settings.discovery_host}:8761/eureka",
                    app_name="attendance-service",
-                   instance_port=rest_port,
-                   instance_ip_network="127.0.0.1")
+                   instance_port=rest_port)
 
 # Drop all tables
 models.Base.metadata.drop_all(engine)
@@ -48,8 +47,8 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
-register_thread = threading.Thread(target=register_eureka)
-register_thread.start()
-register_thread.join()
+register_process = multiprocessing.Process(target=register_eureka)
+register_process.start()
+# register_process.join()
 asyncio.create_task(kafka_router.consumer())
 

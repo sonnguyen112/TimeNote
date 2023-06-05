@@ -60,6 +60,6 @@ public class UserService {
             throw new AppException(400, "Username or password invalid");
         }
         String token = jwtUtil.generateToken(user.getUserCode(), user.getRole());
-        return LoginResponse.builder().token(token).build();
+        return LoginResponse.builder().token(token).role(user.getRole()).build();
     }
 }

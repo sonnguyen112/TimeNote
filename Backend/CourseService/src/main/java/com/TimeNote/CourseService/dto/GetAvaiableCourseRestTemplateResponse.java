@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CourseDetailResponse {
-    private Long courseDetailId;
-    private String courseCode;
-    private String courseName;
-    private String courseClass;
+public class GetAvaiableCourseRestTemplateResponse {
+    private String course_id;
+    private String coord;
 }

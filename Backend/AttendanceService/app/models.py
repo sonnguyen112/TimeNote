@@ -11,7 +11,7 @@ class CourseActivation(Base):
     __tablename__ = "courseactivation"
     id = Column(BigInteger, primary_key=True, nullable=False)
     course_id = Column(String(20), nullable=False, unique=True)
-    coord = Column(String(20), nullable=False)
+    coord = Column(String(200), nullable=False)
 
 class StudentManagement(Base):
     __tablename__ = "studentmanagement"

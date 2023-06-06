@@ -17,9 +17,8 @@ class GetCoursesActiveResponse(BaseModel):
 
 class FaceRecognizeRequest(BaseModel):
     img_base64: str
-    course_id: str
+    student_id: str
 
 class FaceRecognizeResponse(BaseModel):
-    code: str
     is_real: bool
     is_find: bool

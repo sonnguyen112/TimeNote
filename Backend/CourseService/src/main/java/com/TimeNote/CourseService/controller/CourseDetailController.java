@@ -5,6 +5,7 @@ import com.TimeNote.CourseService.dto.CourseDetailResponse;
 import com.TimeNote.CourseService.exceptions.AppException;
 import com.TimeNote.CourseService.service.CourseDetailService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.util.List;
 
@@ -35,12 +36,13 @@ public class CourseDetailController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CourseDetailResponse>> getCourseDetailByUserCode(@RequestParam("userCode") String userCode, @RequestHeader String role){
+    public ResponseEntity<List<CourseDetailResponse>> getCourseDetailByUserCode(@RequestParam("userCode") String userCode,
+    @RequestParam("longitude") Double longitude, @RequestParam("latitude") Double latitude, @RequestHeader String role) throws JsonMappingException, JsonProcessingException{
         if (role.equals("teacher")){
             return ResponseEntity.status(HttpStatus.OK).body(courseDetailService.getCourseDetailByTeacherCode(userCode));
         }
         else if (role.equals("student")){
-            return ResponseEntity.status(HttpStatus.OK).body(courseDetailService.getCourseDetailByStudentCode(userCode));
+            return ResponseEntity.status(HttpStatus.OK).body(courseDetailService.getCourseDetailByStudentCode(userCode, longitude, latitude));
         }
         throw new AppException(403, "You are not authorized");
     }

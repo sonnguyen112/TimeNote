@@ -11,7 +11,7 @@ export default function App() {
             <ThemeProvider>
                 <NavigationContainer>
                     <HomeScreen />
-                    <StatusBar />
+                    {/* <StatusBar /> */}
                 </NavigationContainer>
             </ThemeProvider>
         </SafeAreaProvider>

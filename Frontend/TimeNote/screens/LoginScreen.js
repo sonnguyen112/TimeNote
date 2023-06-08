@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Text, TextInput, View, StyleSheet,TouchableOpacity } from "react-native";
+import { Text, TextInput, View, StyleSheet,TouchableOpacity, ActivityIndicator} from "react-native";
+import { IDServer } from "../common/GlobalVariable";
 
 
 
@@ -7,11 +8,13 @@ const Login = (props) => {
     const [userCode, setUserCode] = React.useState("")
     const [password, setPassword] = React.useState("")
     const [error, setError] = React.useState("")
+    const [isLoading,setLoading] = React.useState(false)
 
     const handleLogin = () => {
         async function fetchLogin()
         {
-            const response = await fetch("https://4c2c-2001-ee0-4fcb-e0f0-e668-5cdb-5dcc-a11b.ngrok-free.app/auth_api/user/login",
+            setLoading(true)
+            const response = await fetch(`${IDServer}auth_api/user/login`,
             {
                 method: 'POST',
                 headers: {
@@ -23,21 +26,32 @@ const Login = (props) => {
                     password: password,
                   })
             })
+            console.log(userCode)
+            console.log(password)
 
+            console.log(response.status)
             if (response.status === 200)
             {
                 const json = await response.json()
+                console.log(json)
                 props.setToken(json.token)
+                props.setRole(json.role)
+                props.navigation.navigate('Student')
             }
             else{
                 setError("Usercode or password is incorrect")
             }
 
         }
+        fetchLogin();
+        setLoading(false)
+
     }
     return (
-        //{(error !=="") && <View></View>}
         <View style={styles.container}>
+             <ActivityIndicator color={"#fff"}  animating={isLoading}/>
+            {(error !== "") && <View ><Text style={styles.errorView}>{error}
+                </Text></View>}
             <View style={styles.inputView}>
             <TextInput
             style={styles.TextInput}
@@ -85,8 +99,8 @@ const styles = StyleSheet.create({
     TextInput: {
     height: 50,
     flex: 1,
-    padding: 10,
-    //marginLeft: 20,
+    padding: 0,
+    marginLeft: 10,
     },
     forgot_button: {
         height: 30,
@@ -104,8 +118,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 40,
     backgroundColor: "#F3CE03",
+    },
+
+    errorView: {
+        marginBottom: 30,
+        color: "red",
+        fontWeight: "bold"
     }
 
 })
 
-export default Login
+export default Login;

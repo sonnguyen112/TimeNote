@@ -3775,6 +3775,11 @@ expo-asset@~8.9.1:
     path-browserify "^1.0.0"
     url-parse "^1.5.9"
 
+expo-av@^13.2.1:
+  version "13.2.1"
+  resolved "https://registry.yarnpkg.com/expo-av/-/expo-av-13.2.1.tgz#ce502a4c5d4a57962fd9f5f1a40c76c39c88f5ee"
+  integrity sha512-mC0mYSzaOaZgXjzhW2l4Ag325JjH6q5IbptfwD7gkMOFYy7VPOMxEMUnetadbs3DDzmgE6vUWrTjUIUbwq59qg==
+
 expo-camera@^13.2.1:
   version "13.2.1"
   resolved "https://registry.npmjs.org/expo-camera/-/expo-camera-13.2.1.tgz"
@@ -3810,6 +3815,11 @@ expo-font@~11.1.1:
   dependencies:
     fontfaceobserver "^2.1.0"
 
+expo-image@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/expo-image/-/expo-image-1.2.3.tgz#f3582d725ffb7437f8ce946ad44fe33f0aa0603d"
+  integrity sha512-+Mnx6rcneWSUGfHkUDV3cQ3R4lVwoIDFs/tcXVqnlxyNJdNxpW2cge9pS2Hpj3UDoZVhZPLR8LHS8E9wEaC0NA==
+
 expo-keep-awake@~12.0.1:
   version "12.0.1"
   resolved "https://registry.npmjs.org/expo-keep-awake/-/expo-keep-awake-12.0.1.tgz"
@@ -3820,7 +3830,17 @@ expo-linear-gradient@~11.0.3:
   resolved "https://registry.npmjs.org/expo-linear-gradient/-/expo-linear-gradient-11.0.3.tgz"
   integrity sha512-LuzTM5+iEHCQfC2TBHAAI+ZjPvf0TvGiA7GYMsyTnakGA2r4JtsV8Ah/miQPKhfG06jLDOo4grUoSMGqbmSrEw==
 
-expo-modules-autolinking@>=0.8.1, expo-modules-autolinking@1.2.0:
+expo-modules-autolinking@>=0.8.1, expo-location@^15.1.1:
+  version "15.1.1"
+  resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-15.1.1.tgz#9289ca687afbdb73d847cc8c821ab66746eb9d47"
+  integrity sha512-hoKRlmi6Ya+NeZ72Zt385SDcSsIDpJI60TCBVO+Hc9xfKA9Hyminyyo5WiwI8J03igmPTCl8Y37MxBNKY9AWkg==
+
+expo-media-library@^15.2.3:
+  version "15.2.3"
+  resolved "https://registry.yarnpkg.com/expo-media-library/-/expo-media-library-15.2.3.tgz#188f3c77f58b354f0ea6250f6756ac1e1a226291"
+  integrity sha512-Oz8b8Xsvfj7YcutUBtI84NUIqSnt7iCM5HZ5DyKoWKKiDK/+aUuj3RXNQELG8jUw6pQPgEwgbZ1+J8SdH/y9jw==
+
+expo-modules-autolinking@1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/expo-modules-autolinking/-/expo-modules-autolinking-1.2.0.tgz"
   integrity sha512-QOPh/iXykNDCAzUual1imSrn2aDakzCGUp2QmxVREr0llajXygroUWlT9sQXh1zKzbNp+a+i/xK375ZeBFiNJA==
@@ -4229,6 +4249,11 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
+
+fs@^0.0.1-security:
+  version "0.0.1-security"
+  resolved "https://registry.yarnpkg.com/fs/-/fs-0.0.1-security.tgz#8a7bd37186b6dddf3813f23858b57ecaaf5e41d4"
+  integrity sha512-3XY9e1pP0CVEUCdj5BmfIZxRBTSDycnbqhIOGec9QYtmVH2fbLpj86CFWkrNOkt/Fvty4KZG5lTglL9j/gJ87w==
 
 fsevents@^2.3.2:
   version "2.3.2"
@@ -7386,6 +7411,11 @@ react-native-permissions@^3.8.0:
   dependencies:
     picocolors "^1.0.0"
     pkg-dir "^5.0.0"
+
+react-native-progress-circle@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-progress-circle/-/react-native-progress-circle-2.1.0.tgz#62bdf31c76962d10c5c14446b61ff7d05cf0d0ec"
+  integrity sha512-VP0s92bgbTMQy4hQzPU4LlGyFj3z5u7i1HYFG8/yzXXfGkX1cxKS4xOlE+OTaObWC99w7Bodi3h8R7En2nQPYw==
 
 react-native-ratings@8.0.4:
   version "8.0.4"

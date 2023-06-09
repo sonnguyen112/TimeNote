@@ -24,8 +24,8 @@ const Detail = (props) => {
     const [image, setImage] = useState(null);
     const [type, setType] = useState(Camera.Constants.Type.front);
     const [faceData, setFaceData] = useState(null);
-    const [authFinish, setAuthFinish] = useState(true);
-    const [startSendPicture, setStartSendPicture] = useState(2);
+    const [authFinish, setAuthFinish] = useState(false);
+    const [startSendPicture, setStartSendPicture] = useState(0);
 
     const [isFind, setIsFind] = useState(null);
     const [isReal, setIsReal] = useState(null);
@@ -46,7 +46,7 @@ const Detail = (props) => {
 
         let newPhoto = await cameraRef.current.takePictureAsync(options);
         setPhoto(newPhoto);
-        // setStartSendPicture(startSendPicture + 1);
+        setStartSendPicture(startSendPicture + 1);
     };
 
     const sendFaceCheck = async (_photo) => {
@@ -60,7 +60,7 @@ const Detail = (props) => {
                 },
                 body: JSON.stringify({
                     img_base64: _photo.base64,
-                    student_id: "20125000",
+                    student_id: global.student_id,
                 }),
             }
         );
@@ -73,6 +73,36 @@ const Detail = (props) => {
         console.log(response.status, "hihihi");
         console.log(global.NGROK + "attendance_api/face_recognize/");
     };
+
+    const generateExt = (student_code) => {
+        return (
+            "student_code=" + student_code
+        );
+    };
+
+    const confirmAttend = async () => {
+        let response = await fetch(
+            global.NGROK + "course_activation/checking_student?" + genExt(global.student_id),
+            {
+                method: "GET",
+                headers: {
+                    Authorization: global.token,
+                    // "Content-Type": "application/json",
+                },
+                // body: JSON.stringify({
+                //     img_base64: _photo.base64,
+                //     student_id: global.student_id,
+                // }),
+            }
+        );
+        let json = await response.json();
+        if (response.status === 200) {
+            //TODO: Back to home screen
+            console.log(json.is_find, json.is_real);
+            setIsFind(json.is_find);
+            setIsReal(json.is_real);
+        }
+    }
 
     useEffect(() => {
         (async () => {
@@ -88,14 +118,15 @@ const Detail = (props) => {
     }, []);
 
     useEffect(() => {
-        console.log(isFind, isReal);
+
+        if( isReal && isFind ) {
+            setAuthFinish(true)
+        }
     }, [isFind, isReal]);
 
     useEffect(() => {
         if (photo) {
-            console.log("\n\n\n\n\n\n\n\n\n")
             console.log(photo.base64);
-            console.log("\n\n\n\n\n\n\n\n\n")
             sendFaceCheck(photo);
         } 
     }, [photo]);
@@ -148,6 +179,7 @@ const Detail = (props) => {
                     type={Camera.Constants.Type.front}
                     ref={cameraRef}
                     style={styles.camera}
+                    whiteBalance={0}
                     // onFacesDetected={handleFacesDetected}
                     // faceDetectorSettings={{
                     //     mode: FaceDetector.FaceDetectorMode.fast,
@@ -173,14 +205,21 @@ const Detail = (props) => {
                 <View style={styles.cont1}>
                     <FontAwesome name="heart-o" color="#000" size={25} />
                     <Pressable disabled={!authFinish}>
-                        <TouchableOpacity
-                            style={styles.btn}
+                        {authFinish ? <TouchableOpacity
+                            style={styles.btnNext}
                             // onPress={() => props.navigation.navigate("Home")}
                         >
                             <Text style={styles.btnText}>
-                                {authFinish ? "Next" : "Waiting..."}
+                                Next
                             </Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> : <TouchableOpacity
+                            style={styles.btnWait}
+                            // onPress={() => props.navigation.navigate("Home")}
+                        >
+                            <Text style={styles.btnText}>
+                                Waiting
+                            </Text>
+                        </TouchableOpacity>}
                     </Pressable>
                 </View>
             </View>
@@ -226,8 +265,14 @@ const styles = StyleSheet.create({
         paddingRight: 80,
         lineHeight: 25,
     },
-    btn: {
+    btnNext: {
         backgroundColor: "#E2443B",
+        paddingHorizontal: 60,
+        paddingVertical: 12,
+        borderRadius: 30,
+    },
+    btnWait: {
+        backgroundColor: "#D3D3D3",
         paddingHorizontal: 60,
         paddingVertical: 12,
         borderRadius: 30,

@@ -11,13 +11,9 @@ const InfoCourse = (props) => {
         alignItems: "center",
         justifyContent: "center",
         flex: 1,
+        paddingBottom: 5
       }}
     >
-      {props.image === "book-open" ? (
-        <Feather name="book-open" size={35} color="#BDBDBD" />
-      ) : (
-        <Ionicons name={props.image} size={35} color="#BDBDBD" />
-      )}
       <Text style={{ fontSize: 20, fontWeight: "bold" }}>{props.number}</Text>
       <Text style={{ fontSize: 18, color: "#BDBDBD" }}>{props.name}</Text>
     </View>

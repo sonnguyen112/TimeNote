@@ -13,7 +13,6 @@ const Login = (props) => {
     const handleLogin = () => {
         async function fetchLogin()
         {
-            setLoading(true)
             const response = await fetch(`${IDServer}auth_api/user/login`,
             {
                 method: 'POST',
@@ -36,20 +35,31 @@ const Login = (props) => {
                 console.log(json)
                 props.setToken(json.token)
                 props.setRole(json.role)
-                props.navigation.navigate('Student')
+                props.setUserCode(userCode)
+                if (json.role == 'teacher')
+                {
+                    props.navigation.navigate('CourseTeacher')
+                }
+                else
+                {
+
+                }
             }
             else{
                 setError("Usercode or password is incorrect")
             }
-
+            setLoading(false)
         }
+        setLoading(true)
         fetchLogin();
-        setLoading(false)
 
     }
     return (
         <View style={styles.container}>
-             <ActivityIndicator color={"#fff"}  animating={isLoading}/>
+            { isLoading && <View style={styles.spinner}><ActivityIndicator
+                            size="large"
+                            color="#8e2de2"
+                        /></View>}
             {(error !== "") && <View ><Text style={styles.errorView}>{error}
                 </Text></View>}
             <View style={styles.inputView}>
@@ -94,6 +104,16 @@ const styles = StyleSheet.create({
         height: 45,
         marginBottom: 20,
         alignItems: "center",
+      },
+      spinner:{
+        position:"absolute",
+        backgroundColor: 'rgba(52, 52, 52, 0.3)',
+        height: "100%",
+        width: "100%",
+        zIndex: 3, // works on ios
+        elevation: 3, // works on android
+        alignContent: "center",
+        justifyContent: "center"
       },
 
     TextInput: {

@@ -11,7 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import InfoCourse from "./InfoCourse";
 
-const Title = () => {
+const Title = (props) => {
   return (
     <View>
       <View>
@@ -20,16 +20,16 @@ const Title = () => {
         </TouchableOpacity>
       </View>
       <View
-        style={{ alignItems: "center", paddingTop: "5%", paddingBottom: "5%" }}
+        style={{ alignItems: "center", paddingTop: "5%", paddingBottom: "5%"}}
       >
         <Text style={{ fontSize: 28, lineHeight: 35, color: "#464545" }}>
-          Algorithm and complexity
+          {props.name}
         </Text>
       </View>
-      <View style={{ display: "flex", flexDirection: "row" }}>
+      <View style={{ display: "flex", justifyContent:"space-evenly", flexDirection:"row", width:"70%"}}>
         <InfoCourse image={"people"} number={"0/45"} name={"Student"} />
-        <InfoCourse image={"book"} number={"CS350"} name={"Course"} />
-        <InfoCourse image={"book-open"} number={"20CTT2"} name={"Class"} />
+        <InfoCourse image={"book"} number={props.code} name={"Course"} />
+        <InfoCourse image={"book-open"} number={props.class} name={"Class"} />
       </View>
     </View>
   );

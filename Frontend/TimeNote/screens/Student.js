@@ -12,7 +12,8 @@ import Title from "../components/Student/Title";
 import ButtonView from "../components/Student/ButtonView";
 import StudentList from "../components/Student/StudentList";
 
-const Student = () => {
+const Student = (props) => {
+  console.log(props.route.params)
   return (
     <SafeAreaView
       style={{
@@ -22,7 +23,7 @@ const Student = () => {
         flex: 1,
       }}
     >
-      <Title />
+      <Title name={props.route.params.name} class={props.route.params.class} code={props.route.params.code}/>
       <ButtonView />
       <StudentList />
     </SafeAreaView>

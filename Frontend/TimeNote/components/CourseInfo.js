@@ -1,9 +1,9 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-const CourseInfo = ({ courseName, courseID, courseClass }) => {
+const CourseInfo = ({ courseName, courseID, courseClass, onClick}) => {
     return (
-        <TouchableOpacity style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={onClick}>
             <View style={{marginBottom: 20}}>
                 <Text style={styles.coursename}>{courseName}</Text>
             </View>

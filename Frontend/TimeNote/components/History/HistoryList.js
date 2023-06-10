@@ -14,7 +14,7 @@ const HistoryList = (props) => {
         alignItems: "center",
       }}
     >
-      <View style={{ marginTop: "3%", width: "100%", minHeight: "100%" }}>
+      <View style={{ marginTop: "3%", width: "100%", minHeight: "100%", display:"flex"}}>
         <FlatList
           data={props.historyList}
           renderItem={({ item }) => (

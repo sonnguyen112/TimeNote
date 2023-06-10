@@ -21,31 +21,32 @@ const HistoryItem = ({ name, code, index, navigation, course_id, token}) => {
   }
 
   return (
+
     <TouchableOpacity
       style={{
-        backgroundColor: background,
-        width: "100%",
-        flexDirection: "row",
-        height: 75,
-        alignItems: "center",
-      }}
-      onPress={() => {
-        if (navigation !== null)
+          backgroundColor: background,
+          width: "100%",
+          flexDirection: "row",
+          height: 75,
+          alignItems: "center",
+        }}
+        onPress={() => {
+            if (navigation !== null)
             navigation.navigate("SelectedHistory", {id:course_id, his_name:name, token:token})
-      }}
-    >
+        }}
+        >
       <View style={{ width: "20%", alignItems: "center", justifyContent: "center" }}>
         <View
           style={{
-            backgroundColor: numberColor,
-            alignItems: "center",
-            justifyContent: "center",
-            width: 50,
-            height: 50,
-            borderRadius: 25,
-            marginTop: "5%",
-            marginLeft: "5%",
-          }}>
+              backgroundColor: numberColor,
+              alignItems: "center",
+              justifyContent: "center",
+              width: 50,
+              height: 50,
+              borderRadius: 25,
+              marginTop: "5%",
+              marginLeft: "5%",
+            }}>
           <Text style={{ fontSize: 30, fontWeight: 400, lineHeight: 37.5 }}>
             {index}
           </Text>

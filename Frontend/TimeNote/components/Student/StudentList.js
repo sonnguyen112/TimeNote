@@ -30,6 +30,7 @@ const StudentList = (props) => {
             />
           )}
           keyExtractor={(item) => item.studentID}
+          ListFooterComponent={<View style={{height: 20}}/>}
         />
       </View>
     </View>

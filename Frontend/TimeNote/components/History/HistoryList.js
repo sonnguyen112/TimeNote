@@ -1,7 +1,7 @@
 import { View, Text, FlatList, ScrollView } from "react-native";
 import React from "react";
 
-import StudentItem from "./HistoryItem";
+import HistoryItem   from "./HistoryItem";
 
 
 const HistoryList = (props) => {
@@ -18,13 +18,16 @@ const HistoryList = (props) => {
         <FlatList
           data={props.historyList}
           renderItem={({ item }) => (
-            <StudentItem
-              name={item.studentName}
-              code={item.studentCode}
+            <HistoryItem
+              name={item.name}
+              code=""
               index={item.index}
+              navigation={props.navigation}
+              course_id={props.id}
+              token = {props.token}
             />
           )}
-          keyExtractor={(item) => item.studentID}
+          keyExtractor={(item) => item.index}
         />
       </View>
     </View>

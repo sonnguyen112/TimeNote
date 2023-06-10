@@ -1,7 +1,9 @@
 import * as React from "react";
-import { Text, TextInput, View, StyleSheet,TouchableOpacity, ActivityIndicator} from "react-native";
+import { Text, TextInput, View, StyleSheet,TouchableOpacity, ActivityIndicator, Image} from "react-native";
 import { IDServer } from "../common/GlobalVariable";
 import "./global.js";
+
+import logo from "../images/logo.png"
 
 
 
@@ -56,6 +58,7 @@ const Login = (props) => {
     }
     return (
         <View style={styles.container}>
+            <Image style={{width:120, height:100, marginBottom: 50, tintColor:"#5A13B5"}} source={logo}/>
             { isLoading && <View style={styles.spinner}><ActivityIndicator
                             size="large"
                             color="#8e2de2"
@@ -65,6 +68,7 @@ const Login = (props) => {
             <View style={styles.inputView}>
             <TextInput
             style={styles.TextInput}
+            keyboardType = 'numeric'
             placeholder="Usercode"
             placeholderTextColor="#003f5c"
             onChangeText={(userCode) => setUserCode(userCode)}
@@ -143,7 +147,8 @@ const styles = StyleSheet.create({
     errorView: {
         marginBottom: 30,
         color: "red",
-        fontWeight: "bold"
+        fontWeight: "bold",
+        position:"relative"
     }
 
 })

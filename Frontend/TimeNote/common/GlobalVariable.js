@@ -1,1 +1,1 @@
-export const IDServer = "https://1313-2402-800-f0a1-5bd8-ee9b-f575-27f8-8bfa.ngrok-free.app/";
+export const IDServer = "https://fc40-113-161-45-117.ngrok-free.app/";

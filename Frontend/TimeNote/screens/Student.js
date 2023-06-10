@@ -124,7 +124,7 @@ const Student = (props) => {
       }}
     >
       <Title navigation={props.navigation} name={props.route.params.name} class={props.route.params.class} code={props.route.params.code} numStu={`${attendance ? String(studentList.length - numStudent) + '/' : ''}${props.route.params.numStu}`} id={props.route.params.id} />
-      <ButtonView onPress={pressAttendance} attendance={attendance}/>
+      <ButtonView onPress={pressAttendance} attendance={attendance} navigation={props.navigation} id={props.route.params.id} token={props.route.params.token}/>
       <StudentList studentList={attendance ? studentAbsentList : studentList} />
     </SafeAreaView>
   );

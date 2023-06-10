@@ -50,6 +50,7 @@ const ButtonView = (props) => {
           marginRight: "3%",
           height: "80%",
         }}
+        onPress={() =>{props.navigation.navigate("History", {id:props.id, token:props.token})}}
       >
         <Text style={{ fontSize: 18, lineHeight: 22.5, fontWeight: 400 }}>
           History

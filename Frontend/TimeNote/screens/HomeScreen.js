@@ -4,7 +4,6 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import ViewCourse from "./ViewCourse";
 import ViewCourseTeacher from "./ViewCourseTeacher";
-
 import FaceCollectionScreen from "./FaceCollectionScreen";
 import LoginScreen from "./LoginScreen"
 

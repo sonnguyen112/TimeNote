@@ -1,12 +1,8 @@
 import React from "react";
 import {
-  LogBox,
-  StyleSheet,
+  ActivityIndicator,
   Text,
-  TextInput,
   View,
-  Image,
-  Button,
   TouchableOpacity,
 } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
@@ -27,30 +23,36 @@ const ButtonView = (props) => {
         style={{
           alignItems: "center",
           justifyContent: "center",
+          flexDirection:"row",
           flex: 1,
-          backgroundColor: "#F3CE03",
+          backgroundColor: props.attendance ? "rgba(243,206,3,0.5)" : "rgba(243,206,3,1)",
+          borderRadius: 15,
+          marginRight: "3%",
+          height: "80%",
+        }}
+        onPress={() => {props.onPress();}}
+      >
+        <Text style={{ fontSize: 18, lineHeight: 22.5, fontWeight: 400 }}>
+          Attendance
+        </Text>
+
+        <ActivityIndicator size="small" style={{position:"absolute", right:"5%"}} animating={props.attendance}/>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection:"row",
+          flex: 1,
+          backgroundColor: "rgba(243,206,3,1)",
           borderRadius: 15,
           marginRight: "3%",
           height: "80%",
         }}
       >
         <Text style={{ fontSize: 18, lineHeight: 22.5, fontWeight: 400 }}>
-          Attendance
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          flex: 1,
-          backgroundColor: "#F3CE03",
-          borderRadius: 15,
-          height: "80%",
-          marginLeft: "3%",
-        }}
-      >
-        <Text style={{ fontSize: 18, lineHeight: 22.5, fontWeight: 400 }}>
-          Report
+          History
         </Text>
       </TouchableOpacity>
     </View>

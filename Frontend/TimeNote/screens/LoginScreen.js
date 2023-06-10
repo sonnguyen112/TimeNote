@@ -28,11 +28,10 @@ const Login = (props) => {
             console.log(userCode)
             console.log(password)
 
-            console.log(response.status)
+
             if (response.status === 200)
             {
                 const json = await response.json()
-                console.log(json)
                 props.setToken(json.token)
                 props.setRole(json.role)
                 props.setUserCode(userCode)

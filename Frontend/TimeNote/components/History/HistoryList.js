@@ -1,10 +1,10 @@
 import { View, Text, FlatList, ScrollView } from "react-native";
 import React from "react";
 
-import StudentItem from "./StudentItem";
+import StudentItem from "./HistoryItem";
 
 
-const StudentList = (props) => {
+const HistoryList = (props) => {
 
   return (
     <View
@@ -14,14 +14,9 @@ const StudentList = (props) => {
         alignItems: "center",
       }}
     >
-      <View style={{ marginTop: "3%" }}>
-        <Text style={{ fontSize: 30, fontWeight: 400, lineHeight: 37.5 }}>
-          Student
-        </Text>
-      </View>
       <View style={{ marginTop: "3%", width: "100%", minHeight: "100%" }}>
         <FlatList
-          data={props.studentList}
+          data={props.historyList}
           renderItem={({ item }) => (
             <StudentItem
               name={item.studentName}
@@ -36,4 +31,4 @@ const StudentList = (props) => {
   );
 };
 
-export default StudentList;
+export default HistoryList;

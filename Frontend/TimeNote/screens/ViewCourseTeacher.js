@@ -55,8 +55,7 @@ const ViewCourse = (props) => {
     };
 
     const courseOnClick = (course) => {
-        console.log(course)
-        props.navigation.navigate("Student", {class:course.courseClass, name:course.courseName, code:course.courseCode})
+        props.navigation.navigate("Student", {token:props.token ,class:course.courseClass, name:course.courseName, code:course.courseCode, numStu:course.numOfStudent, id:course.courseDetailId, location:location})
     }
 
     const getCourseList = async () => {
@@ -111,7 +110,6 @@ const ViewCourse = (props) => {
     }, []);
 
     useEffect(() => {
-        console.log(location);
 
         if (location !== null) {
             getCourseList().catch(console.error);

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Text, TextInput, View, StyleSheet,TouchableOpacity, ActivityIndicator} from "react-native";
 import { IDServer } from "../common/GlobalVariable";
+import "./global.js";
 
 
 
@@ -13,7 +14,7 @@ const Login = (props) => {
     const handleLogin = () => {
         async function fetchLogin()
         {
-            const response = await fetch(`${IDServer}auth_api/user/login`,
+            const response = await fetch(`${global.NGROK}auth_api/user/login`,
             {
                 method: 'POST',
                 headers: {
@@ -41,7 +42,7 @@ const Login = (props) => {
                 }
                 else
                 {
-
+                    props.navigation.navigate('CourseStudent')
                 }
             }
             else{

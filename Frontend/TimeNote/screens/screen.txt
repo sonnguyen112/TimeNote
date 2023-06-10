@@ -1,1 +1,21 @@
 xem mỗi feature như là 1 screen gồm nhiều component
+<View style={styles.cont1}>
+                        <FontAwesome name="heart-o" color="#000" size={25} />
+                        <Pressable disabled={!authFinish}>
+                            {authFinish ? (
+                                <TouchableOpacity
+                                    style={styles.btnNext}
+                                    // onPress={() => props.navigation.navigate("Home")}
+                                >
+                                    <Text style={styles.btnText}>Next</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity
+                                    style={styles.btnWait}
+                                    // onPress={() => props.navigation.navigate("Home")}
+                                >
+                                    <Text style={styles.btnText}>Waiting</Text>
+                                </TouchableOpacity>
+                            )}
+                        </Pressable>
+                    </View>

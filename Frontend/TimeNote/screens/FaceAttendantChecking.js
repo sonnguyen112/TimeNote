@@ -1,10 +1,12 @@
 import React, { Component, useEffect, useState, useRef } from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
+
 // import * as FaceDetector from "expo-face-detector";
 // import { Video, ResizeMode } from "expo-av";
 // import { Image } from "expo-image"
@@ -16,6 +18,7 @@ const blurhash =
 
 const Detail = (props) => {
     const cameraRef = useRef();
+
     const [photo, setPhoto] = useState(null);
     const [hasCameraPermission, setHasCameraPermission] = useState(null);
     const [hasMediaLibraryPermission, setHasMediaLibraryPermission] =
@@ -25,10 +28,22 @@ const Detail = (props) => {
     const [type, setType] = useState(Camera.Constants.Type.front);
     const [faceData, setFaceData] = useState(null);
     const [authFinish, setAuthFinish] = useState(false);
-    const [startSendPicture, setStartSendPicture] = useState(0);
+    const [startSendPicture, setStartSendPicture] = useState(2);
+    /*
+    startSendPicture:
+        0: verified
+        1: unverified -> stop -> back to home
+        > 1: take picture
+    */
 
     const [isFind, setIsFind] = useState(null);
     const [isReal, setIsReal] = useState(null);
+    const [countSend, setCountSend] = useState(0);
+    const [isShow, setIsShow] = useState(-1);
+
+    const hideDialog = () => {
+        setIsShow(isShow - 1);
+    };
 
     const handleFacesDetected = ({ faces }) => {
         setFaceData(faces);
@@ -46,7 +61,6 @@ const Detail = (props) => {
 
         let newPhoto = await cameraRef.current.takePictureAsync(options);
         setPhoto(newPhoto);
-        setStartSendPicture(startSendPicture + 1);
     };
 
     const sendFaceCheck = async (_photo) => {
@@ -55,12 +69,12 @@ const Detail = (props) => {
             {
                 method: "POST",
                 headers: {
-                    Authorization: global.token,
+                    Authorization: props.token,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     img_base64: _photo.base64,
-                    student_id: global.student_id,
+                    student_id: props.userCode,
                 }),
             }
         );
@@ -69,24 +83,25 @@ const Detail = (props) => {
             console.log(json.is_find, json.is_real);
             setIsFind(json.is_find);
             setIsReal(json.is_real);
+            if (startSendPicture > 1) setStartSendPicture(startSendPicture + 1);
         }
         console.log(response.status, "hihihi");
         console.log(global.NGROK + "attendance_api/face_recognize/");
     };
 
     const generateExt = (student_code) => {
-        return (
-            "student_code=" + student_code
-        );
+        return "student_code=" + student_code;
     };
 
     const confirmAttend = async () => {
         let response = await fetch(
-            global.NGROK + "course_activation/checking_student?" + genExt(global.student_id),
+            global.NGROK +
+                "attendance_api/course_activation/checking_student?" +
+                generateExt(props.userCode),
             {
                 method: "GET",
                 headers: {
-                    Authorization: global.token,
+                    Authorization: props.token,
                     // "Content-Type": "application/json",
                 },
                 // body: JSON.stringify({
@@ -97,12 +112,9 @@ const Detail = (props) => {
         );
         let json = await response.json();
         if (response.status === 200) {
-            //TODO: Back to home screen
-            console.log(json.is_find, json.is_real);
-            setIsFind(json.is_find);
-            setIsReal(json.is_real);
+            print("heheee");
         }
-    }
+    };
 
     useEffect(() => {
         (async () => {
@@ -118,30 +130,62 @@ const Detail = (props) => {
     }, []);
 
     useEffect(() => {
-
-        if( isReal && isFind ) {
-            setAuthFinish(true)
+        console.log("grrr: ", isReal, isFind);
+        if (isReal && isFind) {
+            setStartSendPicture(0);
+            setAuthFinish(true);
+            confirmAttend();
+            
+        } else {
+            setCountSend(countSend + 1);
         }
     }, [isFind, isReal]);
 
     useEffect(() => {
+        console.log("Count Send: ", countSend);
+        if (countSend === 10) {
+            setStartSendPicture(1);
+        }
+    }, [countSend]);
+
+    useEffect(() => {
         if (photo) {
-            console.log(photo.base64);
+            console.log("Co Hinh!");
             sendFaceCheck(photo);
-        } 
+        }
     }, [photo]);
- 
+
     // is_real: bool
     // is_find: bool
     useEffect(() => {
-        const interval = setTimeout(() => __take_picture(), 1000);
+        if (!(isReal && isFind)) {
+            const interval = setTimeout(() => __take_picture(), 1000);
 
-        if (startSendPicture === 0) {
+            if (startSendPicture === 0 || startSendPicture === 1) {
+                console.log("Check OK!");
+                clearTimeout(interval);
+            }
+
+            return () => clearTimeout(interval);
+        }
+    }, [startSendPicture]);
+
+    useEffect(() => {
+        if(authFinish) {
+            setIsShow(2);
+        }
+    }, [authFinish])
+
+    useEffect(() => {
+        const interval = setTimeout(() => hideDialog(), 500);
+
+        if (isShow === 0) {
             clearTimeout(interval);
+            props.navigation.navigate("CourseStudent");
         }
 
         return () => clearTimeout(interval);
-    }, [startSendPicture]);
+    }, [isShow]);
 
     if (hasCameraPermission === false) {
         return <Text>No Camera Access</Text>;
@@ -151,7 +195,7 @@ const Detail = (props) => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                    <Feather name="chevron-left" color="#FFF" size={25} />
+                    <Feather name="chevron-left" color="#f0f0f0" size={25} />
                 </TouchableOpacity>
             </View>
             {/* <View>
@@ -174,6 +218,7 @@ const Detail = (props) => {
                     width: "100%",
                     flexDirection: "column",
                     backgroundColor: "black",
+                    borderRadius: 25,
                 }}>
                 <Camera
                     type={Camera.Constants.Type.front}
@@ -192,11 +237,11 @@ const Detail = (props) => {
                     onCameraReady={__take_picture}></Camera>
             </View>
             <View style={styles.cont3}>
-                <Text style={styles.title}>Algorithm and complexity</Text>
-                <Text style={styles.subtitle}>CS100</Text>
+                <Text style={styles.title}>{props.courseName}</Text>
+                <Text style={styles.subtitle}>{props.courseCode}</Text>
                 <View style={{ ...styles.cont2, justifyContent: "flex-end" }}>
                     <View style={styles.selected}>
-                        <Text>Asso.Prof Tran Minh Triet</Text>
+                        <Text>Asso.Prof Teacher Teacher Teacher</Text>
                     </View>
                 </View>
                 <Text style={styles.text}>
@@ -205,23 +250,43 @@ const Detail = (props) => {
                 <View style={styles.cont1}>
                     <FontAwesome name="heart-o" color="#000" size={25} />
                     <Pressable disabled={!authFinish}>
-                        {authFinish ? <TouchableOpacity
-                            style={styles.btnNext}
-                            // onPress={() => props.navigation.navigate("Home")}
-                        >
-                            <Text style={styles.btnText}>
-                                Next
-                            </Text>
-                        </TouchableOpacity> : <TouchableOpacity
-                            style={styles.btnWait}
-                            // onPress={() => props.navigation.navigate("Home")}
-                        >
-                            <Text style={styles.btnText}>
-                                Waiting
-                            </Text>
-                        </TouchableOpacity>}
+                        {!authFinish ? (
+                            <TouchableOpacity
+                                style={styles.btnWait}
+                                // onPress={() => props.navigation.navigate("Home")}
+                            >
+                                <Text style={styles.btnText}>Waiting</Text>
+                            </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity
+                                style={styles.btnNext}
+                                onPress={() =>
+                                    props.navigation.navigate("CourseStudent")
+                                }>
+                                <Text style={styles.btnText}>Next</Text>
+                            </TouchableOpacity>
+                        )}
                     </Pressable>
                 </View>
+                {isShow > 0 ? (
+                    <TouchableOpacity
+                        style={
+                            startSendPicture === 0
+                                ? styles.popupDialogPos
+                                : styles.popupDialogNeg
+                        }
+                        onPress={() => {
+                            hideDialog();
+                        }}>
+                        <MaterialCommunityIcons
+                            name="face-recognition"
+                            size={40}
+                            color="#F4F5FF"
+                        />
+                    </TouchableOpacity>
+                ) : (
+                    <View style={{ position: "absolute" }}></View>
+                )}
             </View>
         </View>
     );
@@ -266,7 +331,7 @@ const styles = StyleSheet.create({
         lineHeight: 25,
     },
     btnNext: {
-        backgroundColor: "#E2443B",
+        backgroundColor: "#BAB86C",
         paddingHorizontal: 60,
         paddingVertical: 12,
         borderRadius: 30,
@@ -322,5 +387,30 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 40,
         borderTopRightRadius: 40,
         paddingHorizontal: 20,
+    },
+    popupDialogPos: {
+        width: "100%",
+        position: "absolute",
+        backgroundColor: "#77DD77",
+        alignItems: "center",
+        bottom: ".5%",
+
+        borderRadius: 15,
+
+        paddingTop: 13,
+        paddingBottom: 13,
+    },
+
+    popupDialogNeg: {
+        width: "100%",
+        position: "absolute",
+        backgroundColor: "#FF6961",
+        alignItems: "center",
+        bottom: ".5%",
+
+        borderRadius: 15,
+
+        paddingTop: 13,
+        paddingBottom: 13,
     },
 });

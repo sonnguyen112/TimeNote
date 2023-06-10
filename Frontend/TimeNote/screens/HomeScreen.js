@@ -4,8 +4,11 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import ViewCourse from "./ViewCourse";
 import ViewCourseTeacher from "./ViewCourseTeacher";
-import FaceCollectionScreen from "./FaceCollectionScreen";
+
+import Detail from "./FaceAttendantChecking";
 import LoginScreen from "./LoginScreen"
+
+import "./global.js"
 
 
 import Student from "./Student"
@@ -21,8 +24,8 @@ const HomeScreen = () => {
             <Stack.Screen name = "Home" options={{headerShown: false}} children={(props) => (<LoginScreen setToken={setToken} setRole={setRole} setUserCode={setUserCode} navigation={props.navigation}/>)}/>
             <Stack.Screen name = "Student" options={{headerShown: false}} component={Student}/>
             <Stack.Screen name = "CourseTeacher" options={{headerShown: false}} children={(props) => (<ViewCourseTeacher token={token} userCode={userCode} navigation={props.navigation}/>)}/>
-            <Stack.Screen name = "FaceCollection" options={{headerShown: false}} component={FaceCollectionScreen}>
-            </Stack.Screen>
+            <Stack.Screen name = "CourseStudent" options={{headerShown: false}} children={(props) => (<ViewCourse token={token} userCode={userCode} navigation={props.navigation}/>)}/>
+            <Stack.Screen name = "CourseDetailAuth" options={{headerShown: false}} children={(props) => (<Detail token={token} userCode={userCode} navigation={props.navigation}/>)}/>
         </Stack.Navigator>
     );
 };

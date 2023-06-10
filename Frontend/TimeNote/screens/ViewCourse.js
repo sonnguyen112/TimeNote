@@ -35,7 +35,7 @@ const getCurrentDate = () => {
     return date;
 };
 
-const ViewCourse = () => {
+const ViewCourse = (props) => {
     const renderHeader = () => (
         <View>
             <Text>Course</Text>
@@ -45,7 +45,7 @@ const ViewCourse = () => {
     const generateExt = (userCode, longtitude, latitude) => {
         return (
             "userCode=" +
-            String(userCode) +
+            userCode +
             "&longitude=" +
             longtitude.toString() +
             "&latitude=" +
@@ -53,24 +53,23 @@ const ViewCourse = () => {
         );
     };
 
-    const courseOnClick = (courseDetailId) => {
-        
+    const courseOnClick = (course) => {
+        props.navigation.navigate("CourseDetailAuth", {class:course.courseClass, name:course.courseName, code:course.courseCode})
     }
 
-    console.log(global.NGROK)
     const getCourseList = async () => {
         let response = await fetch(
             global.NGROK +
                 "course_api/course_detail?" +
                 generateExt(
-                    20125000,
+                    props.userCode,
                     location.coords.longitude,
                     location.coords.latitude
                 ),
             {
                 method: "GET",
                 headers: {
-                    Authorization: global.token,
+                    Authorization: props.token,
                     // 'Content-Type': 'application/x-www-form-urlencoded',
                 },
             }
@@ -185,7 +184,7 @@ const ViewCourse = () => {
                                     courseClass={item.courseClass}
                                     courseID={item.courseCode}
                                     courseName={item.courseName}
-                                    onClick={() => courseOnClick(item.courseDetailId)}
+                                    onClick={() => courseOnClick(item)}
                                 ></CourseInfo>
                             ))}
                         </Animated.View>

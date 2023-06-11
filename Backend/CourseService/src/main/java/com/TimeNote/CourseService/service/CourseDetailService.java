@@ -117,6 +117,7 @@ public class CourseDetailService {
                 .courseCode(newCourseDetail.getCourse().getCourseCode())
                 .courseName(newCourseDetail.getCourse().getCourseName())
                 .courseClass(newCourseDetail.getClassCode())
+                .numOfStudent(newCourseDetail.getStudents().size())
                 .build();
     }
 

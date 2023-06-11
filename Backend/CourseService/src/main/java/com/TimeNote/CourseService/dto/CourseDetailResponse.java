@@ -14,4 +14,5 @@ public class CourseDetailResponse {
     private String courseCode;
     private String courseName;
     private String courseClass;
+    private Integer numOfStudent;
 }
